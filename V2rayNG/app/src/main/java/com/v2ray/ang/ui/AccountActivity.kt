@@ -35,14 +35,6 @@ class AccountActivity : BaseActivity() {
         this.deviceId = android.provider.Settings.Secure.getString(contentResolver, android.provider.Settings.Secure.ANDROID_ID) ?: ""
         binding.accountUserIdV.text = this.deviceId
 
-        binding.layoutAccountType.setOnClickListener {
-
-        }
-
-        binding.layoutAccountUserId.setOnClickListener {
-            onCopyDeviceId()
-        }
-
         binding.accountActionUpgrade.setOnClickListener{
             /*
             val intent = Intent(this, VipActivity::class.java)
