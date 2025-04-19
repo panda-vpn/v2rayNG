@@ -153,6 +153,8 @@ dependencies {
     implementation(libs.editorkit)
     implementation(libs.flexbox)
 
+    implementation("com.google.android.material:material:1.11.0")
+
     // Data and Storage Libraries
     implementation(libs.mmkv.static)
     implementation(libs.gson)
