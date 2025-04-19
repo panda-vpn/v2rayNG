@@ -672,6 +672,11 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        when(item.itemId) {
+            R.id.drawer_menu_account -> startActivity(Intent(this, AccountActivity::class.java))
+        }
+
+        /*
         // Handle navigation view item clicks here.
         when (item.itemId) {
             R.id.sub_setting -> requestSubSettingActivity.launch(Intent(this, SubSettingActivity::class.java))
@@ -687,8 +692,9 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             R.id.logcat -> startActivity(Intent(this, LogcatActivity::class.java))
             R.id.about -> startActivity(Intent(this, AboutActivity::class.java))
         }
-
+        */
         binding.drawerLayout.closeDrawer(GravityCompat.START)
         return true
+
     }
 }

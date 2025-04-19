@@ -1,5 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <string name="drawer_menu_account" translatable="false">Account</string>
+    <string name="drawer_menu_settings" translatable="false">Settings</string>
+    <string name="drawer_menu_app_filter" translatable="false">Apps Filter</string>
+    <string name="drawer_menu_feedback" translatable="false"><![CDATA[Help & Feedback]]></string>
+    <string name="drawer_menu_share" translatable="false">Share App</string>
+
+    <string name="account_title" translatable="false">Account</string>
+    <string name="account_type" translatable="false">Account Type</string>
+    <string name="account_user_id" translatable="false">User ID</string>
+    <string name="account_upgrade" translatable="false">Upgrade</string>
+
+    <string name="toast_copied" translatable="false">Copied</string>
+
     <string name="app_name" translatable="false">SafeBit VPN</string>
     <string name="app_widget_name">Switch</string>
     <string name="app_tile_name">Switch</string>
