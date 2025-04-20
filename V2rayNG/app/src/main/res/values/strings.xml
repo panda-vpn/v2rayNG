@@ -25,6 +25,18 @@
     <string name="about_terms_of_service" translatable="false">Terms of Service</string>
     <string name="about_privacy_policy" translatable="false">Privacy Policy</string>
 
+    <string name="feedback_title" translatable="false"><![CDATA[Help & Feedback]]></string>
+    <string name="feedback_how_feel" translatable="false">How do you feel about our app?</string>
+    <string name="feedback_connect_failed" translatable="false">Connect failed</string>
+    <string name="feedback_always_connecting" translatable="false">Always connecting</string>
+    <string name="feedback_auto_disconnected" translatable="false">Auto-disconnected</string>
+    <string name="feedback_server_is_full" translatable="false">Server is full/sleep</string>
+    <string name="feedback_speed_too_low" translatable="false">Speed_too_low</string>
+    <string name="feedback_too_much_ads" translatable="false">Too much adverting</string>
+    <string name="feedback_other" translatable="false">Describe your other question</string>
+    <string name="feedback_more" translatable="false">More ></string>
+    <string name="feedback_submit" translatable="false">Submit</string>
+
     <string name="toast_copied" translatable="false">Copied</string>
 
 

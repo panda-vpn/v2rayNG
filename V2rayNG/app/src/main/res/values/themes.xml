@@ -32,4 +32,9 @@
     <style name="BrandedSwitch" parent="AppTheme">
         <item name="colorAccent">@color/color_fab_active</item>
     </style>
+
+    <style name="TextAppearance.AppCompat.Button." parent="AppTheme">
+        <item name="colorAccent">@color/color_fab_active</item>
+    </style>
+
 </resources>

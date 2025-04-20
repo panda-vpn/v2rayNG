@@ -676,6 +676,8 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             R.id.drawer_menu_account -> startActivity(Intent(this, AccountActivity::class.java))
             R.id.drawer_menu_settings -> startActivity(Intent(this, SettingsActivity::class.java))
             R.id.drawer_menu_app_filter -> startActivity(Intent(this, PerAppProxyActivity::class.java))
+            R.id.drawer_menu_feedback -> startActivity(Intent(this, FeedbackActivity::class.java))
+            R.id.drawer_menu_share -> shareApp()
         }
 
         /*
@@ -698,5 +700,16 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         binding.drawerLayout.closeDrawer(GravityCompat.START)
         return true
 
+    }
+
+    private fun shareApp() {
+        val text = "SafeBit VPN, come with me!\n" +
+                "https://play.google.com/store/apps/details?id=com.safebit.android"
+        val shareIntent = Intent().apply {
+            action = Intent.ACTION_SEND
+            putExtra(Intent.EXTRA_TEXT, text)
+            type = "text/plain"
+        }
+        startActivity(Intent.createChooser(shareIntent, "Tell your friends"))
     }
 }

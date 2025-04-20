@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?attr/selectableItemBackground"
+    android:orientation="vertical"
+    android:padding="@dimen/padding_spacing_dp16">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:text="@string/feedback_how_feel"
+        android:textAppearance="@style/TextAppearance.AppCompat.Title" />
+
+    <androidx.appcompat.widget.AppCompatCheckBox
+        android:id="@+id/feedback_connect_failed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:padding="@dimen/padding_spacing_dp8"
+        android:text="@string/feedback_connect_failed" />
+
+    <androidx.appcompat.widget.AppCompatCheckBox
+        android:id="@+id/feedback_always_connecting"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:padding="@dimen/padding_spacing_dp8"
+        android:text="@string/feedback_always_connecting" />
+
+    <androidx.appcompat.widget.AppCompatCheckBox
+        android:id="@+id/feedback_auto_disconnected"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:padding="@dimen/padding_spacing_dp8"
+        android:text="@string/feedback_auto_disconnected" />
+
+    <androidx.appcompat.widget.AppCompatCheckBox
+        android:id="@+id/feedback_server_is_full"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:padding="@dimen/padding_spacing_dp8"
+        android:text="@string/feedback_server_is_full" />
+
+    <androidx.appcompat.widget.AppCompatCheckBox
+        android:id="@+id/feedback_speed_too_low"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:padding="@dimen/padding_spacing_dp8"
+        android:text="@string/feedback_speed_too_low" />
+
+    <androidx.appcompat.widget.AppCompatCheckBox
+        android:id="@+id/feedback_too_much_ads"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:padding="@dimen/padding_spacing_dp8"
+        android:text="@string/feedback_too_much_ads" />
+
+    <EditText
+        android:id="@+id/feedback_other"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:hint="@string/feedback_other"
+        android:inputType="text" />
+
+    <TextView
+        android:id="@+id/feedback_more"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:text="@string/feedback_more"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/feedback_submit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="30dp"
+        android:layout_marginBottom="120dp"
+        android:gravity="center_vertical|center_horizontal"
+        android:background="@drawable/rounded_button"
+        android:text="@string/feedback_submit"
+        app:theme="@style/TextAppearance.AppCompat.Button"/>
+
+</LinearLayout>
