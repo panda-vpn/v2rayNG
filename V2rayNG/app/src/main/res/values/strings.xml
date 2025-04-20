@@ -37,6 +37,18 @@
     <string name="feedback_more" translatable="false">More ></string>
     <string name="feedback_submit" translatable="false">Submit</string>
 
+    <string name="vip_upgrade_to" translatable="false">Upgrade to VIP</string>
+    <string name="vip_permission_1" translatable="false">Worldwide Location</string>
+    <string name="vip_permission_2" translatable="false">Bypass Restricted Network</string>
+    <string name="vip_permission_3" translatable="false">Streaming Servers</string>
+    <string name="vip_permission_4" translatable="false">Faster Speed</string>
+    <string name="vip_permission_5" translatable="false">No Ads</string>
+    <string name="vip_monthly_plan_name" translatable="false">Monthly Plan</string>
+    <string name="vip_yearly_plan_name" translatable="false">Yearly Plan</string>
+    <string name="vip_weekly_plan_name" translatable="false">Weekly Plan</string>
+    <string name="vip_sub_hint1" translatable="false">Subscription auto-renews until canceled.</string>
+    <string name="vip_sub_hint2" translatable="false">Cancel anytime on Google Play Store.</string>
+
     <string name="toast_copied" translatable="false">Copied</string>
 
 

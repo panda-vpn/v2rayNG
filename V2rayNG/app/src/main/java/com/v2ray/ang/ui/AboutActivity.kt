@@ -54,6 +54,11 @@ class AboutActivity : BaseActivity() {
         }
     }
 
+    override fun onDestroy() {
+        Log.d(AppConfig.TAG, "onDestroy")
+        super.onDestroy()
+    }
+
     private fun checkForUpdates(includePreRelease: Boolean) {
         lifecycleScope.launch {
             val result = UpdateCheckerManager.checkForUpdate(includePreRelease)

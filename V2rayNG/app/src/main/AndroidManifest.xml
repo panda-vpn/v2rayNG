@@ -72,6 +72,9 @@
         <activity
             android:name=".ui.FeedbackActivity"
             android:exported="false" />
+        <activity
+            android:name=".ui.VipActivity"
+            android:exported="false" />
 
         <activity
             android:name=".ui.MainActivity"

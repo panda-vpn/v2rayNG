@@ -301,7 +301,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         }
 
         R.id.menu_vip -> {
-            Log.d(AppConfig.TAG, "******* vip")
+            startActivity(Intent(this, VipActivity::class.java))
             true
         }
 
