@@ -674,6 +674,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when(item.itemId) {
             R.id.drawer_menu_account -> startActivity(Intent(this, AccountActivity::class.java))
+            R.id.drawer_menu_settings -> startActivity(Intent(this, SettingsActivity::class.java))
         }
 
         /*

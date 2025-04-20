@@ -60,6 +60,12 @@
         <activity
             android:name=".ui.AccountActivity"
             android:exported="false" />
+        <activity
+            android:name=".ui.SettingsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.AboutActivity"
+            android:exported="false" />
 
         <activity
             android:name=".ui.MainActivity"
@@ -88,9 +94,7 @@
             android:name=".ui.ServerCustomConfigActivity"
             android:exported="false"
             android:windowSoftInputMode="stateUnchanged" />
-        <activity
-            android:name=".ui.SettingsActivity"
-            android:exported="false" />
+
         <activity
             android:name=".ui.PerAppProxyActivity"
             android:exported="false" />
@@ -148,9 +152,6 @@
                 <data android:host="install-sub" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".ui.AboutActivity"
-            android:exported="false" />
 
         <service
             android:name=".service.V2RayVpnService"
