@@ -37,8 +37,11 @@ class SettingsActivity : BaseActivity() {
         title = getString(R.string.settings_title)
 
         binding.actionAbout.setOnClickListener {
-            Log.d(AppConfig.TAG, "////**********")
             startActivity(Intent(this, AboutActivity::class.java))
+        }
+
+        binding.settingsActionCollectLogs.setOnClickListener {
+            startActivity(Intent(this, LogcatActivity::class.java))
         }
     }
 }

@@ -15,6 +15,7 @@ import com.v2ray.ang.R
 import com.v2ray.ang.databinding.ActivityLogcatBinding
 import com.v2ray.ang.extension.toastSuccess
 import com.v2ray.ang.util.Utils
+import com.v2ray.ang.utilx.ToastUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -121,7 +122,7 @@ class LogcatActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener {
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
         R.id.copy_all -> {
             Utils.setClipboard(this, logsets.joinToString("\n"))
-            toastSuccess(R.string.toast_success)
+            ToastUtils.showShort(this, R.string.toast_copied)
             true
         }
 
