@@ -15,7 +15,7 @@
     <string name="settings_title" translatable="false">Settings</string>
     <string name="settings_auto_connect" translatable="false">Auto-connect when app starts</string>
     <string name="settings_last_selected" translatable="false">Save Last selected server</string>
-    <string name="settings_remove_ads" translatable="false">Remove_ads</string>
+    <string name="settings_remove_ads" translatable="false">Remove ads</string>
     <string name="settings_manage_sub" translatable="false">Manage Subscription</string>
     <string name="settings_about" translatable="false">About</string>
     <string name="settings_collect_logs" translatable="false">Collect Logs</string>
