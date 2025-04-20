@@ -675,6 +675,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         when(item.itemId) {
             R.id.drawer_menu_account -> startActivity(Intent(this, AccountActivity::class.java))
             R.id.drawer_menu_settings -> startActivity(Intent(this, SettingsActivity::class.java))
+            R.id.drawer_menu_app_filter -> startActivity(Intent(this, PerAppProxyActivity::class.java))
         }
 
         /*

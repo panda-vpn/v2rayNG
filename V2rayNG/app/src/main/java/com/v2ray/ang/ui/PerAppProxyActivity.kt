@@ -22,6 +22,7 @@ import com.v2ray.ang.handler.SettingsManager
 import com.v2ray.ang.util.AppManagerUtil
 import com.v2ray.ang.util.HttpUtil
 import com.v2ray.ang.util.Utils
+import com.v2ray.ang.utilx.ToastUtils
 import es.dmoral.toasty.Toasty
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -143,16 +144,6 @@ class PerAppProxyActivity : BaseActivity() {
             true
         }
 
-        R.id.import_proxy_app -> {
-            importProxyApp()
-            true
-        }
-
-        R.id.export_proxy_app -> {
-            exportProxyApp()
-            true
-        }
-
         else -> super.onOptionsItemSelected(item)
     }
 
@@ -170,27 +161,10 @@ class PerAppProxyActivity : BaseActivity() {
             launch(Dispatchers.Main) {
                 Log.i(AppConfig.TAG, content)
                 selectProxyApp(content, true)
-                toastSuccess(R.string.toast_success)
+                ToastUtils.showShort(this@PerAppProxyActivity, R.string.toast_success)
                 binding.pbWaiting.hide()
             }
         }
-    }
-
-    private fun importProxyApp() {
-        val content = Utils.getClipboard(applicationContext)
-        if (TextUtils.isEmpty(content)) return
-        selectProxyApp(content, false)
-        toastSuccess(R.string.toast_success)
-    }
-
-    private fun exportProxyApp() {
-        var lst = binding.switchBypassApps.isChecked.toString()
-
-        adapter?.blacklist?.forEach block@{
-            lst = lst + System.getProperty("line.separator") + it
-        }
-        Utils.setClipboard(applicationContext, lst)
-        toastSuccess(R.string.toast_success)
     }
 
     @SuppressLint("NotifyDataSetChanged")

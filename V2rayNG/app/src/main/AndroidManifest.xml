@@ -66,7 +66,10 @@
         <activity
             android:name=".ui.AboutActivity"
             android:exported="false" />
-
+        <activity
+            android:name=".ui.PerAppProxyActivity"
+            android:exported="false" />
+        
         <activity
             android:name=".ui.MainActivity"
             android:exported="true"
@@ -94,10 +97,6 @@
             android:name=".ui.ServerCustomConfigActivity"
             android:exported="false"
             android:windowSoftInputMode="stateUnchanged" />
-
-        <activity
-            android:name=".ui.PerAppProxyActivity"
-            android:exported="false" />
         <activity
             android:name=".ui.ScannerActivity"
             android:exported="false" />

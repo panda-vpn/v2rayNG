@@ -7,6 +7,7 @@ import androidx.work.WorkManager
 import com.tencent.mmkv.MMKV
 import com.v2ray.ang.AppConfig.ANG_PACKAGE
 import com.v2ray.ang.handler.SettingsManager
+import java.util.Locale
 
 class AngApplication : MultiDexApplication() {
     companion object {
@@ -31,6 +32,15 @@ class AngApplication : MultiDexApplication() {
      */
     override fun onCreate() {
         super.onCreate()
+
+        ////----
+        val locale = Locale("en")
+        Locale.setDefault(locale)
+        val config = android.content.res.Configuration(this.resources.configuration)
+        config.setLocale(locale)
+        this.createConfigurationContext(config)
+        this.resources.updateConfiguration(config, this.resources.displayMetrics)
+        ////----
 
         MMKV.initialize(this)
 
