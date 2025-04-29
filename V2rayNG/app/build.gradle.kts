@@ -10,7 +10,7 @@ android {
 
     defaultConfig {
         applicationId = "com.v2ray.ang.fb"
-        minSdk = 21
+        minSdk = 23
         targetSdk = 35
         versionCode = 646
         versionName = "1.9.46"
@@ -61,10 +61,12 @@ android {
             dimension = "distribution"
             applicationIdSuffix = ".fdroid"
             buildConfigField("String", "DISTRIBUTION", "\"F-Droid\"")
+            buildConfigField("String", "CHANNEL", "\"FDroid\"")
         }
         create("playstore") {
             dimension = "distribution"
             buildConfigField("String", "DISTRIBUTION", "\"Play Store\"")
+            buildConfigField("String", "CHANNEL", "\"gooleplay\"")
         }
     }
 
@@ -160,8 +162,6 @@ dependencies {
     implementation(libs.editorkit)
     implementation(libs.flexbox)
 
-    implementation("com.google.android.material:material:1.11.0")
-
     // Data and Storage Libraries
     implementation(libs.mmkv.static)
     implementation(libs.gson)
@@ -197,4 +197,8 @@ dependencies {
     testImplementation(libs.org.mockito.mockito.inline)
     testImplementation(libs.mockito.kotlin)
     coreLibraryDesugaring(libs.desugar.jdk.libs)
+
+    implementation("com.google.android.material:material:1.11.0")
+    implementation(libs.okhttp)
+    implementation(libs.kotlinx.serialization.json)
 }
