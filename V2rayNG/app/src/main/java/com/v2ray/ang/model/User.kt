@@ -21,7 +21,6 @@ const val NODE_TYPE_LOCATION = 1
 const val NODE_TYPE_STREAMING = 2
 const val NODE_ID_AUTO_SELECT = Int.MAX_VALUE
 
-
 @Serializable
 data class User (@SerialName("deviceId") var deviceId: String) {
     @SerialName("userId")
@@ -70,8 +69,8 @@ data class Node(@SerialName("id")  val id: Int) {
     var encryptPassword: String = ""
 }
 
-object Client {
-    private const val TAG = "Client"
+object UserProfile {
+    private const val TAG = "UserProfile"
 
     var isSyncOk = AtomicBoolean(false)
     private var isSyncGo = AtomicBoolean(false)
@@ -187,7 +186,7 @@ object Client {
             this.parseNodes(joNodes)
             Log.d(TAG, "nodes:${Json.encodeToString(this.nodes.get())}")
 
-            // 理解探测网络延迟
+            // 立即探测网络延迟
             Latency.tick()
         }
     }
@@ -206,20 +205,18 @@ object Client {
         }
     }
 
-    fun Sync(context: Context) {
+    fun sync(context: Context) {
         if (!NetworkUtils.isNetworkAvailable(context)) {
             return
         }
 
-        if (isSyncOk.get()) {
-            return
-        }
-
-        if (isSyncGo.compareAndSet(false, true)) {
-            try {
-                this.reqUser()
-            } finally {
-                isSyncGo.set(false)
+        if (!isSyncOk.get()) {
+            if (isSyncGo.compareAndSet(false, true)) {
+                try {
+                    this.reqUser()
+                } finally {
+                    isSyncGo.set(false)
+                }
             }
         }
     }

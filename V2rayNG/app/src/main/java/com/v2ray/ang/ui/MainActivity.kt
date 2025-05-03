@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.ColorStateList
+import android.net.ConnectivityManager
 import android.net.Uri
 import android.net.VpnService
 import android.os.Build
@@ -13,6 +14,7 @@ import android.util.Log
 import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -38,10 +40,15 @@ import com.v2ray.ang.handler.AngConfigManager
 import com.v2ray.ang.handler.MigrateManager
 import com.v2ray.ang.handler.MmkvManager
 import com.v2ray.ang.helper.SimpleItemTouchHelperCallback
+import com.v2ray.ang.model.Conf
+import com.v2ray.ang.model.Latency
+import com.v2ray.ang.model.UserProfile
 import com.v2ray.ang.service.V2RayServiceManager
 import com.v2ray.ang.util.Utils
+import com.v2ray.ang.utilx.NetworkUtils
 import com.v2ray.ang.viewmodel.MainViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -50,6 +57,14 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     private val binding by lazy {
         ActivityMainBinding.inflate(layoutInflater)
     }
+
+    companion object {
+        private const val TAG = "MainActivity"
+    }
+
+    private lateinit var userProfileJob: Job
+    private lateinit var latencyJob: Job
+    private lateinit var networkCallback: ConnectivityManager.NetworkCallback
 
     private val adapter by lazy { MainRecyclerAdapter(this) }
     private val requestVpnPermission = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
@@ -149,7 +164,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                 setTestState(getString(R.string.connection_test_testing))
                 mainViewModel.testCurrentServerRealPing()
             } else {
-//                tv_test_state.text = getString(R.string.connection_test_fail)
+                // tv_test_state.text = getString(R.string.connection_test_fail)
             }
         }
 
@@ -194,6 +209,49 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                 }
             }
         })
+
+        networkCallback = NetworkUtils.registerNetworkCallback(
+            context = this,
+            onAvailable = {
+                /*
+                runOnUiThread {
+                    // binding.redHeaderNotificationText.visibility = View.INVISIBLE
+                }
+                */
+                Log.i(TAG, "network available")
+                UserProfile.sync(this)
+            },
+            onLost = {
+                Log.i(TAG, "network lost")
+                /*
+                runOnUiThread {
+                    binding.redHeaderNotificationText.text = getText(R.string.red_header_network_unavailable)
+                    binding.redHeaderNotificationText.visibility = View.VISIBLE
+                }
+                */
+            }
+        )
+
+        userProfileJob = lifecycleScope.launch(Dispatchers.IO) {
+            while (true) {
+                delay(1000 * 10)
+                Log.d(TAG, "user profile sync tick")
+                UserProfile.sync(this@MainActivity)
+            }
+        }
+
+        latencyJob = lifecycleScope.launch(Dispatchers.IO) {
+            while (true) {
+                delay(Conf.LATENCY_TICK_INTERVAL)
+                Log.d(TAG, "latency tick")
+                Latency.tick()
+                /*
+                if (serviceStatus.value == Status.Stopped) {
+                    Latency.tick()
+                }
+                */
+            }
+        }
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -422,5 +480,14 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             type = "text/plain"
         }
         startActivity(Intent.createChooser(shareIntent, "Tell your friends"))
+    }
+
+    override fun onDestroy() {
+        userProfileJob.cancel()
+        latencyJob.cancel()
+
+        NetworkUtils.unregisterNetworkCallback(this, networkCallback)
+
+        super.onDestroy()
     }
 }

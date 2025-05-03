@@ -1,15 +1,13 @@
 package com.v2ray.ang.model
 
+import android.text.TextUtils
 import android.util.Log
-import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
-import java.io.BufferedReader
-import java.io.InputStreamReader
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -17,19 +15,14 @@ object Latency {
 
     private const val TAG = "Latency"
 
-    class Latency(val hostIp: String) {
-        var rtt : Long? = null          // round trip time
-        var updateAt: Long = 0          // millisecond
-    }
+    // rtt单位是秒, -1表示未获取延迟，updateAt 时间戳，单位毫秒
+    data class LatencyRecord(val hostIp: String, val rtt: Long?, val updateAt: Long)
 
-    val latencyTbl = ConcurrentHashMap<String, Latency>()
-    val execFlag = AtomicBoolean(false)
+    val latencyTbl = ConcurrentHashMap<String, LatencyRecord>()
+    val isOngoing = AtomicBoolean(false)
 
     private fun addIfAbsent(hostIp : String) {
-        if (!latencyTbl.contains(hostIp)) {
-            val ent = Latency(hostIp)
-            latencyTbl.putIfAbsent(hostIp, ent)
-        }
+        latencyTbl.putIfAbsent(hostIp, LatencyRecord(hostIp, null, 0))
     }
 
     fun getRttByHostIp(hostIp: String): Long? {
@@ -41,7 +34,7 @@ object Latency {
         var rtt : Long? = null
         for (item in latencyTbl) {
             val v = item.value
-            if ((rtt == null) || (v.rtt != null && v.rtt!! < rtt)) {
+            if (v.rtt != null && (rtt == null || v.rtt < rtt)) {
                 rtt = v.rtt
             }
         }
@@ -51,46 +44,40 @@ object Latency {
     fun tick() {
         GlobalScope.launch(Dispatchers.IO) {
             Log.d(TAG, "latency tick")
-            val tmpNodes = Client.nodes.get()
+            val tmpNodes = UserProfile.nodes.get()
             for (item in tmpNodes) {
                 addIfAbsent(item.hostIp)
             }
-            safeBatchExec()
+
+            if (isOngoing.compareAndSet(false, true)) {
+                try {
+                    batchPing()
+                } finally {
+                    isOngoing.set(false)
+                }
+            }
         }
     }
 
-    private suspend fun safeBatchExec() {
-        if (!execFlag.compareAndSet(false, true)) {
-            Log.i(TAG, "batch exec reentrancy")
-            return
-        }
-        try {
-            batchExec()
-        } finally {
-            execFlag.set(false)
-        }
-    }
-
-    suspend fun batchExec() {
+    suspend fun batchPing() {
         val hosts = mutableListOf<String>()
         val now = System.currentTimeMillis()
+
         latencyTbl.forEach { entry ->
             val ent = entry.value
-            if (ent.rtt == null || ent.updateAt + Conf.LATENCY_EXPIRE_TIME <= now) {
+            if (ent.updateAt + Conf.LATENCY_EXPIRE_TIME <= now) {
                 hosts.add(ent.hostIp)
             }
         }
 
         val jobs = mutableListOf<Job>()
-        for (item in hosts) {
+        for (hostIp in hosts) {
             val j = GlobalScope.launch(Dispatchers.IO) {
-                val rtt = execLatency(item)
+                val rtt = ping(hostIp)
                 // if (rtt != null && rtt > 30) {          // tun模式下icmp会被拦截处理
-                val ent = Latency(item)
-                ent.rtt = rtt
-                ent.updateAt = now
-                latencyTbl.put(item, ent)
-                Log.i(TAG, "ping $item,latency $rtt ms")
+                val record = LatencyRecord(hostIp, rtt, now)
+                latencyTbl.put(hostIp, record)
+                Log.i(TAG, "ping $hostIp,latency $rtt ms")
                 // }
             }
             jobs.add(j)
@@ -98,36 +85,29 @@ object Latency {
         jobs.joinAll()
     }
 
-    fun execLatency(host: String) : Long? {
+    fun ping(hostIp: String) : Long? {
         for (i in 1..3) {
             try {
-                val startTime = System.currentTimeMillis()
-                Log.d(TAG, "////----- startTime: $startTime")
-                var process = Runtime.getRuntime().exec("ping -s 56 -c 1 $host")
-                ////----
-                val reader = BufferedReader(InputStreamReader(process.inputStream))
-                val output = StringBuilder()
-                var line: String?
-                while (reader.readLine().also { line = it } != null) {
-                    output.append(line).append("\n")
-                }
-                Log.d(TAG, "////----- output: $output")
-                ////----
-                if (process.waitFor() == 0) {
-                    val latency = System.currentTimeMillis() - startTime
-                    Log.d(TAG, "////----- startTime: $startTime,endTime: ${System.currentTimeMillis()},expend $latency")
-                    return latency
+                val command = "/system/bin/ping -s 56 -c 1 $hostIp"
+                val process = Runtime.getRuntime().exec(command)
+                val allText = process.inputStream.bufferedReader().use { it.readText() }
+                if (!TextUtils.isEmpty(allText)) {
+                    val tempInfo = allText.substring(allText.indexOf("min/avg/max/mdev") + 19)
+                    val temps = tempInfo.split("/".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+                    if (temps.count() > 0 && temps[0].length < 10) {
+                        return temps[0].toFloat().toLong()
+                    }
                 }
             } catch (e: Exception) {
-                Log.e(TAG, "ping $host,$e")
+                Log.e(TAG, "ping $hostIp,$e")
             }
         }
         return null
     }
 
-    suspend fun testLatency(no: Int, host: String) {
+    suspend fun testPing(no: Int, host: String) {
         while(true) {
-            val latency = execLatency(host)
+            val latency = ping(host)
             Log.i(TAG, "/////****** $no --- ping $latency")
             delay(5000)
         }

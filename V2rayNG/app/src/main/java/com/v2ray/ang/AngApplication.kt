@@ -7,7 +7,11 @@ import androidx.work.WorkManager
 import com.tencent.mmkv.MMKV
 import com.v2ray.ang.AppConfig.ANG_PACKAGE
 import com.v2ray.ang.handler.SettingsManager
+import com.v2ray.ang.model.UserProfile
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
 import java.util.Locale
+import kotlinx.coroutines.*
 
 class AngApplication : MultiDexApplication() {
     companion object {
@@ -53,5 +57,16 @@ class AngApplication : MultiDexApplication() {
         es.dmoral.toasty.Toasty.Config.getInstance()
             .setGravity(android.view.Gravity.BOTTOM, 0, 200)
             .apply()
+
+        // 先从本地存储恢复用户存档
+        runBlocking(Dispatchers.IO) {
+            UserProfile.readUserFromLocal(this@AngApplication.contentResolver)
+        }
+
+        // 从服务端同步用户存档
+        GlobalScope.launch(Dispatchers.IO) {
+            UserProfile.sync(this@AngApplication)
+        }
     }
+
 }

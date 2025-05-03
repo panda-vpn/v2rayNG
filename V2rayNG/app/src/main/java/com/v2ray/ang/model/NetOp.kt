@@ -13,20 +13,23 @@ object NetOp {
             val url = "${BuildConfig.API_BASE_URL}/$path"
             val body = OkHttpUtils.postJson(url, params.toString())
 
+            Log.d(TAG, "path:$path,req ${params.toString()},rsp:$body")
+
             if (body.isEmpty()) {
-                Log.e(TAG, "got empty,path $path,params ${params.toString()}")
+                Log.e(TAG, "post response empty,path $path,params ${params.toString()}")
                 return Pair(-1, null)
             }
             val jo = JSONObject(body)
 
             val code = jo.getInt("code")
             if (code != 0) {
-                Log.e(TAG, "got empty,path $path,params ${params.toString()},code $code")
+                Log.e(TAG, "post response code,path $path,params ${params.toString()},code $code")
                 return Pair(code, null)
             }
 
             var joData = jo.getJSONObject("data")
             return Pair(0, joData)
+
         } catch (e : Exception) {
             Log.e(TAG, "path $path,params ${params.toString()},exception:$e")
         }
