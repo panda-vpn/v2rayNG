@@ -233,9 +233,9 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         )
 
         userProfileJob = lifecycleScope.launch(Dispatchers.IO) {
-            while (true) {
-                delay(1000 * 10)
+            while (!UserProfile.isSyncComplete()) {
                 Log.d(TAG, "user profile sync tick")
+                delay(1000 * 10)
                 UserProfile.sync(this@MainActivity)
             }
         }

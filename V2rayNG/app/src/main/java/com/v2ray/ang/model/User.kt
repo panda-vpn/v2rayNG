@@ -220,4 +220,8 @@ object UserProfile {
             }
         }
     }
+
+    fun isSyncComplete(): Boolean {
+        return isSyncOk.get()
+    }
 }
