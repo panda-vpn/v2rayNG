@@ -63,7 +63,7 @@ android {
             dimension = "distribution"
             applicationIdSuffix = ".fdroid"
             buildConfigField("String", "DISTRIBUTION", "\"F-Droid\"")
-            buildConfigField("String", "CHANNEL", "\"FDroid\"")
+            buildConfigField("String", "CHANNEL", "\"fdroid\"")
         }
         create("playstore") {
             dimension = "distribution"
