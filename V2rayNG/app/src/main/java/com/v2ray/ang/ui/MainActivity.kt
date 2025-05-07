@@ -355,6 +355,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
         R.id.menu_nodes -> {
             Log.d(AppConfig.TAG, "******* nodes")
+            startActivity(Intent(this, NodesActivity::class.java))
             true
         }
 

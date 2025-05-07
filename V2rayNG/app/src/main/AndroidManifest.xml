@@ -75,6 +75,9 @@
         <activity
             android:name=".ui.VipActivity"
             android:exported="false" />
+        <activity
+            android:name=".ui.NodesActivity"
+            android:exported="false" />
 
         <activity
             android:name=".ui.MainActivity"

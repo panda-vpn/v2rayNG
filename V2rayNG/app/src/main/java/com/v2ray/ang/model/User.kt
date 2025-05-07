@@ -21,6 +21,9 @@ const val NODE_TYPE_LOCATION = 1
 const val NODE_TYPE_STREAMING = 2
 const val NODE_ID_AUTO_SELECT = Int.MAX_VALUE
 
+const val FREE_TYPE_VIP0 = 0
+const val FREE_TYPE_VIP1 = 1
+
 @Serializable
 data class User (@SerialName("deviceId") var deviceId: String) {
     @SerialName("userId")
@@ -191,7 +194,7 @@ object UserProfile {
         }
     }
 
-    private fun reqNodes() {
+    fun reqNodes() {
         val (opCode, joData) = NetOp.user(this.user.deviceId)
         if (opCode != 0 || joData == null) {
             Log.e(TAG, "reqNodes except,opCode $opCode")

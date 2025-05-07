@@ -49,9 +49,17 @@
     <string name="vip_sub_hint1" translatable="false">Subscription auto-renews until canceled.</string>
     <string name="vip_sub_hint2" translatable="false">Cancel anytime on Google Play Store.</string>
 
+    <string name="node_title" translatable="false">Select Server</string>
+    <string name="node_location" translatable="false">Location</string>
+    <string name="node_streaming" translatable="false">Streaming</string>
+    <string name="node_no_available_server" translatable="false">No available server,please refresh the server list.</string>
+    <string name="node_no_available_refresh" translatable="false">Refresh</string>
+    <string name="node_auto_select" translatable="false">Auto select</string>
+    <string name="node_free_vip0" translatable="false">FREE</string>
+
     <string name="toast_copied" translatable="false">Copied</string>
-
-
+    <string name="toast_reconnect_node" translatable="false">The configuration has changed.Please reconnect the server.</string>
+    <string name="toast_network_unavailable" translatable="false">Network unavailable.Check the network setting.</string>
 
 
     <string name="app_name" translatable="false">SafeBit VPN</string>
