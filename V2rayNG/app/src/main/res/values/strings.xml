@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <string name="home_conn_tap_to_open" translatable="false">Tap to Connect</string>
+    <string name="home_conn_connecting" translatable="false">Connecting...</string>
+    <string name="home_conn_connected" translatable="false">Connected</string>
+
     <string name="drawer_menu_account" translatable="false">Account</string>
     <string name="drawer_menu_settings" translatable="false">Settings</string>
     <string name="drawer_menu_app_filter" translatable="false">Apps Filter</string>
@@ -60,6 +64,7 @@
     <string name="toast_copied" translatable="false">Copied</string>
     <string name="toast_reconnect_node" translatable="false">The configuration has changed.Please reconnect the server.</string>
     <string name="toast_network_unavailable" translatable="false">Network unavailable.Check the network setting.</string>
+
 
 
     <string name="app_name" translatable="false">SafeBit VPN</string>

@@ -11,4 +11,6 @@
 
     <color name="colorPrimary">#F5F5F5</color>
     <color name="colorAccent">#000000</color>
+
+    <color name="red_notification">#FF5962</color>
 </resources>

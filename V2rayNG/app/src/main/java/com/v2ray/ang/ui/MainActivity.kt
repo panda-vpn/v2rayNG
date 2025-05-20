@@ -4,54 +4,39 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.content.res.ColorStateList
 import android.net.ConnectivityManager
-import android.net.Uri
-import android.net.VpnService
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
-import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
-import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.tabs.TabLayout
 import com.v2ray.ang.AppConfig
-import com.v2ray.ang.AppConfig.VPN
 import com.v2ray.ang.R
 import com.v2ray.ang.databinding.ActivityMainBinding
-import com.v2ray.ang.dto.EConfigType
 import com.v2ray.ang.extension.toast
-import com.v2ray.ang.extension.toastError
-import com.v2ray.ang.handler.AngConfigManager
 import com.v2ray.ang.handler.MigrateManager
 import com.v2ray.ang.handler.MmkvManager
-import com.v2ray.ang.helper.SimpleItemTouchHelperCallback
 import com.v2ray.ang.model.Conf
 import com.v2ray.ang.model.Latency
 import com.v2ray.ang.model.UserProfile
 import com.v2ray.ang.service.V2RayServiceManager
-import com.v2ray.ang.util.Utils
 import com.v2ray.ang.utilx.NetworkUtils
 import com.v2ray.ang.viewmodel.MainViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedListener {
     private val binding by lazy {
@@ -72,9 +57,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             startV2Ray()
         }
     }
-    private val requestSubSettingActivity = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-        initGroupTab()
-    }
+
     private val tabGroupListener = object : TabLayout.OnTabSelectedListener {
         override fun onTabSelected(tab: TabLayout.Tab?) {
             val selectId = tab?.tag.toString()
@@ -99,15 +82,6 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         ) { isGranted: Boolean ->
             if (isGranted) {
                 when (pendingAction) {
-                    Action.IMPORT_QR_CODE_CONFIG ->
-                        scanQRCodeForConfig.launch(Intent(this, ScannerActivity::class.java))
-
-                    Action.READ_CONTENT_FROM_URI ->
-                        chooseFileForCustomConfig.launch(Intent.createChooser(Intent(Intent.ACTION_GET_CONTENT).apply {
-                            type = "*/*"
-                            addCategory(Intent.CATEGORY_OPENABLE)
-                        }, getString(R.string.title_file_chooser)))
-
                     Action.POST_NOTIFICATIONS -> {}
                     else -> {}
                 }
@@ -126,25 +100,13 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         POST_NOTIFICATIONS
     }
 
-    private val chooseFileForCustomConfig = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-        val uri = it.data?.data
-        if (it.resultCode == RESULT_OK && uri != null) {
-            readContentFromUri(uri)
-        }
-    }
-
-    private val scanQRCodeForConfig = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-        if (it.resultCode == RESULT_OK) {
-            importBatchConfig(it.data?.getStringExtra("SCAN_RESULT"))
-        }
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         title = getString(R.string.app_name)
         setSupportActionBar(binding.toolbar)
 
+        /*
         binding.fab.setOnClickListener {
             if (mainViewModel.isRunning.value == true) {
                 V2RayServiceManager.stopVService(this)
@@ -159,26 +121,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                 startV2Ray()
             }
         }
-        binding.layoutTest.setOnClickListener {
-            if (mainViewModel.isRunning.value == true) {
-                setTestState(getString(R.string.connection_test_testing))
-                mainViewModel.testCurrentServerRealPing()
-            } else {
-                // tv_test_state.text = getString(R.string.connection_test_fail)
-            }
-        }
-
-        binding.recyclerView.setHasFixedSize(true)
-        if (MmkvManager.decodeSettingsBool(AppConfig.PREF_DOUBLE_COLUMN_DISPLAY, false)) {
-            binding.recyclerView.layoutManager = GridLayoutManager(this, 2)
-        } else {
-            binding.recyclerView.layoutManager = GridLayoutManager(this, 1)
-        }
-        addCustomDividerToRecyclerView(binding.recyclerView, this, R.drawable.custom_divider)
-        binding.recyclerView.adapter = adapter
-
-        mItemTouchHelper = ItemTouchHelper(SimpleItemTouchHelperCallback(adapter))
-        mItemTouchHelper?.attachToRecyclerView(binding.recyclerView)
+        */
 
         val toggle = ActionBarDrawerToggle(
             this, binding.drawerLayout, binding.toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close
@@ -187,7 +130,6 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         toggle.syncState()
         binding.navView.setNavigationItemSelectedListener(this)
 
-        initGroupTab()
         setupViewModel()
         migrateLegacy()
 
@@ -263,19 +205,10 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                 adapter.notifyDataSetChanged()
             }
         }
-        mainViewModel.updateTestResultAction.observe(this) { setTestState(it) }
         mainViewModel.isRunning.observe(this) { isRunning ->
             adapter.isRunning = isRunning
             if (isRunning) {
-                binding.fab.setImageResource(R.drawable.ic_stop_24dp)
-                binding.fab.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(this, R.color.color_fab_active))
-                setTestState(getString(R.string.connection_connected))
-                binding.layoutTest.isFocusable = true
             } else {
-                binding.fab.setImageResource(R.drawable.ic_play_24dp)
-                binding.fab.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(this, R.color.color_fab_inactive))
-                setTestState(getString(R.string.connection_not_connected))
-                binding.layoutTest.isFocusable = false
             }
         }
         mainViewModel.startListenBroadcast()
@@ -295,29 +228,6 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             }
 
         }
-    }
-
-    private fun initGroupTab() {
-        binding.tabGroup.removeOnTabSelectedListener(tabGroupListener)
-        binding.tabGroup.removeAllTabs()
-        binding.tabGroup.isVisible = false
-
-        val (listId, listRemarks) = mainViewModel.getSubscriptions(this)
-        if (listId == null || listRemarks == null) {
-            return
-        }
-
-        for (it in listRemarks.indices) {
-            val tab = binding.tabGroup.newTab()
-            tab.text = listRemarks[it]
-            tab.tag = listId[it]
-            binding.tabGroup.addTab(tab)
-        }
-        val selectIndex =
-            listId.indexOf(mainViewModel.subscriptionId).takeIf { it >= 0 } ?: (listId.count() - 1)
-        binding.tabGroup.selectTab(binding.tabGroup.getTabAt(selectIndex))
-        binding.tabGroup.addOnTabSelectedListener(tabGroupListener)
-        binding.tabGroup.isVisible = true
     }
 
     private fun startV2Ray() {
@@ -367,70 +277,6 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         else -> super.onOptionsItemSelected(item)
     }
 
-    private fun importBatchConfig(server: String?) {
-        binding.pbWaiting.show()
-
-        lifecycleScope.launch(Dispatchers.IO) {
-            try {
-                val (count, countSub) = AngConfigManager.importBatchConfig(server, mainViewModel.subscriptionId, true)
-                delay(500L)
-                withContext(Dispatchers.Main) {
-                    when {
-                        count > 0 -> {
-                            toast(getString(R.string.title_import_config_count, count))
-                            mainViewModel.reloadServerList()
-                        }
-
-                        countSub > 0 -> initGroupTab()
-                        else -> toastError(R.string.toast_failure)
-                    }
-                    binding.pbWaiting.hide()
-                }
-            } catch (e: Exception) {
-                withContext(Dispatchers.Main) {
-                    toastError(R.string.toast_failure)
-                    binding.pbWaiting.hide()
-                }
-                Log.e(AppConfig.TAG, "Failed to import batch config", e)
-            }
-        }
-    }
-
-    /**
-     * read content from uri
-     */
-    private fun readContentFromUri(uri: Uri) {
-        val permission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            Manifest.permission.READ_MEDIA_IMAGES
-        } else {
-            Manifest.permission.READ_EXTERNAL_STORAGE
-        }
-
-        if (ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED) {
-            try {
-                contentResolver.openInputStream(uri).use { input ->
-                    importBatchConfig(input?.bufferedReader()?.readText())
-                }
-            } catch (e: Exception) {
-                Log.e(AppConfig.TAG, "Failed to read content from URI", e)
-            }
-        } else {
-            requestPermissionLauncher.launch(permission)
-        }
-    }
-
-    private fun setTestState(content: String?) {
-        binding.tvTestState.text = content
-    }
-
-//    val mConnection = object : ServiceConnection {
-//        override fun onServiceDisconnected(name: ComponentName?) {
-//        }
-//
-//        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-//            sendMsg(AppConfig.MSG_REGISTER_CLIENT, "")
-//        }
-//    }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
         if (keyCode == KeyEvent.KEYCODE_BACK || keyCode == KeyEvent.KEYCODE_BUTTON_B) {

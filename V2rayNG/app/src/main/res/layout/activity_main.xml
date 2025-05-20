@@ -22,95 +22,85 @@
 
         </com.google.android.material.appbar.AppBarLayout>
 
-        <RelativeLayout
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/main_content"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <androidx.coordinatorlayout.widget.CoordinatorLayout
-                android:id="@+id/main_content"
+            <TextView
+                android:id="@+id/red_header_notification_text"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="60dp"
+                android:alpha="0.9"
+                android:background="@color/red_notification"
+                android:drawablePadding="0dp"
+                android:gravity="center_horizontal|center_vertical"
+                android:maxLines="1"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:text="@string/toast_network_unavailable"
+                android:textSize="18sp"
+                app:drawableStartCompat="@drawable/error_24px"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical">
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/animation_power_off"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="120dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:lottie_autoPlay="true"
+                app:lottie_loop="true"
+                app:lottie_rawRes="@raw/animation_power_off_320" />
 
-                    <com.google.android.material.progressindicator.LinearProgressIndicator
-                        android:id="@+id/pb_waiting"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:indeterminate="true"
-                        android:visibility="invisible"
-                        app:indicatorColor="@color/color_fab_active" />
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/animation_power_connecting"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="120dp"
+                android:visibility="invisible"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:lottie_autoPlay="true"
+                app:lottie_loop="true"
+                app:lottie_rawRes="@raw/animation_power_connecting_320" />
 
-                    <com.google.android.material.tabs.TabLayout
-                        android:id="@+id/tab_group"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:padding="@dimen/padding_spacing_dp8"
-                        app:tabIndicatorFullWidth="false"
-                        app:tabMode="scrollable"
-                        app:tabTextAppearance="@style/TabLayoutTextStyle" />
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/animation_power_on"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="120dp"
+                android:visibility="invisible"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:lottie_autoPlay="true"
+                app:lottie_loop="true"
+                app:lottie_rawRes="@raw/animation_power_on_320" />
 
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/recycler_view"
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="1"
-                        android:nextFocusRight="@+id/fab"
-                        android:scrollbars="vertical" />
+            <TextView
+                android:id="@+id/connection_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="@string/home_conn_tap_to_open"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/animation_power_off" />
 
-                    <LinearLayout
-                        android:id="@+id/layout_test"
-                        android:layout_width="match_parent"
-                        android:layout_height="@dimen/view_height_dp64"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:nextFocusLeft="@+id/recycler_view"
-                        android:nextFocusRight="@+id/fab"
-                        android:orientation="vertical">
 
-                        <View
-                            android:layout_width="wrap_content"
-                            android:layout_height="1dp"
-                            android:background="@color/divider_color_light" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
-                        <TextView
-                            android:id="@+id/tv_test_state"
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:gravity="start|center"
-                            android:maxLines="2"
-                            android:minLines="1"
-                            android:paddingStart="@dimen/padding_spacing_dp16"
-                            android:text="@string/connection_test_pending"
-                            android:textAppearance="@style/TextAppearance.AppCompat.Small" />
-
-                    </LinearLayout>
-                </LinearLayout>
-
-                <FrameLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="bottom|end"
-                    android:layout_marginEnd="@dimen/padding_spacing_dp16">
-
-                    <com.google.android.material.floatingactionbutton.FloatingActionButton
-                        android:id="@+id/fab"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="bottom|end"
-                        android:layout_marginBottom="@dimen/view_height_dp36"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:nextFocusLeft="@+id/layout_test"
-                        android:src="@drawable/ic_play_24dp"
-                        app:layout_anchorGravity="bottom|right|end" />
-
-                </FrameLayout>
-            </androidx.coordinatorlayout.widget.CoordinatorLayout>
-        </RelativeLayout>
     </LinearLayout>
 
     <com.google.android.material.navigation.NavigationView
