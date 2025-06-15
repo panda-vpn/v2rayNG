@@ -46,7 +46,7 @@ object Latency {
             Log.d(TAG, "latency tick")
             val tmpNodes = UserProfile.nodes.get()
             for (item in tmpNodes) {
-                addIfAbsent(item.hostIp)
+                addIfAbsent(item.host)
             }
 
             if (isOngoing.compareAndSet(false, true)) {
@@ -65,7 +65,7 @@ object Latency {
 
         latencyTbl.forEach { entry ->
             val ent = entry.value
-            if (ent.updateAt + Conf.LATENCY_EXPIRE_TIME <= now) {
+            if (ent.updateAt + Conf.latencyExpireTime <= now) {
                 hosts.add(ent.hostIp)
             }
         }

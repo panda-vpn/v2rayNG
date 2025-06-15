@@ -27,17 +27,14 @@ const val FREE_TYPE_VIP1 = 1
 @Serializable
 data class User (@SerialName("deviceId") var deviceId: String) {
     @SerialName("userId")
-    var userId: String = ""
+    var userId: Long = 0
 
     @SerialName("createAt")
     var createAt: Int = 0
 }
 
 @Serializable
-data class Node(@SerialName("id")  val id: Int) {
-    @SerialName("type")
-    var type: Int = 0
-
+data class Node(@SerialName("id") val id: Int) {
     @SerialName("hostId")
     var hostId: Int = 0
 
@@ -47,29 +44,23 @@ data class Node(@SerialName("id")  val id: Int) {
     @SerialName("sortId")
     var sortId: Int = 0
 
+    @SerialName("nodeType")
+    var nodeType: Int = 0
+
     @SerialName("name")
     var name: String = ""
 
     @SerialName("icon")
     var icon: String = ""
 
-    @SerialName("isOpen")
-    var isOpen: Boolean = false
-
     @SerialName("freeType")
     var freeType: Int = 0
 
-    @SerialName("hostIp")
-    var hostIp: String = ""
+    @SerialName("host")
+    var host: String = ""
 
-    @SerialName("hostPort")
-    var hostPort: Int = 0
-
-    @SerialName("encryptMethod")
-    var encryptMethod: String = ""
-
-    @SerialName("encryptPassword")
-    var encryptPassword: String = ""
+    @SerialName("link")
+    var link: String = ""
 }
 
 object UserProfile {
@@ -108,18 +99,15 @@ object UserProfile {
         for (i in 0 until nodes.length()) {
             val entry = nodes.getJSONObject(i)
             val nd = Node(entry.getInt("id"))
-            nd.type = entry.getInt("type")
             nd.hostId = entry.getInt("hostId")
             nd.groupId = entry.getInt("groupId")
             nd.sortId = entry.getInt("sortId")
+            nd.nodeType = entry.getInt("nodeType")
             nd.name = entry.getString("name")
             nd.icon = entry.getString("icon")
-            nd.isOpen = entry.getBoolean("isOpen")
             nd.freeType = entry.getInt("freeType")
-            nd.hostIp = entry.getString("hostIp")
-            nd.hostPort = entry.getInt("hostPort")
-            nd.encryptMethod = entry.getString("encryptMethod")
-            nd.encryptPassword = entry.getString("encryptPassword")
+            nd.host = entry.getString("host")
+            nd.link = entry.getString("link")
             tmpNodes.add(nd)
         }
 
@@ -128,22 +116,22 @@ object UserProfile {
     }
 
     private fun parseConf(joConf: JSONObject) {
-        Conf.LATENCY_EXPIRE_TIME = joConf.getLong("latencyExpireTime") * 1000
-        Conf.LATENCY_TICK_INTERVAL = joConf.getLong("latencyTickInterval") * 1000
-        Conf.NODES_EXPIRE_TIME = joConf.getLong("nodesExpireTime") * 1000
-        Conf.LATENCY_GOOD = joConf.getLong("latencyGood")
-        Conf.LATENCY_AVG = joConf.getLong("latencyAvg")
+        Conf.latencyExpireTime = joConf.getLong("latencyExpireTime") * 1000
+        Conf.latencyTickInterval = joConf.getLong("latencyTickInterval") * 1000
+        Conf.nodesExpireTime = joConf.getLong("nodesExpireTime") * 1000
+        Conf.latencyGood = joConf.getLong("latencyGood")
+        Conf.latencyAvg = joConf.getLong("latencyAvg")
 
-        Log.d(TAG, "CONF LATENCY_EXPIRE_TIME ${Conf.LATENCY_EXPIRE_TIME}")
-        Log.d(TAG, "CONF LATENCY_TICK_INTERVAL ${Conf.LATENCY_TICK_INTERVAL}")
-        Log.d(TAG, "CONF NODES_EXPIRE_TIME ${Conf.NODES_EXPIRE_TIME}")
-        Log.d(TAG, "CONF LATENCY_GOOD ${Conf.LATENCY_GOOD}")
-        Log.d(TAG, "CONF LATENCY_AVG ${Conf.LATENCY_AVG}")
+        Log.d(TAG, "Conf latencyExpireTime ${Conf.latencyExpireTime}")
+        Log.d(TAG, "Conf latencyTickInterval ${Conf.latencyTickInterval}")
+        Log.d(TAG, "Conf nodesExpireTime ${Conf.nodesExpireTime}")
+        Log.d(TAG, "Conf LatencyGood ${Conf.latencyGood}")
+        Log.d(TAG, "Conf LatencyAvg ${Conf.latencyAvg}")
     }
 
     fun isNodesExpired(): Boolean {
         val liveTime = System.currentTimeMillis() - nodesUpdateAt.get()
-        return liveTime > Conf.NODES_EXPIRE_TIME
+        return liveTime > Conf.nodesExpireTime
     }
 
     fun getChoiceNodeId(): Int {
@@ -159,7 +147,7 @@ object UserProfile {
     }
 
     private fun reqUser() {
-        val (opCode, joData) = NetOp.user(this.user.deviceId)
+        val (opCode, joData) = NetOp.user(this.user.userId, this.user.deviceId)
         if (opCode != 0 || joData == null) {
             Log.e(TAG, "reqUser except,opCode $opCode")
             return
@@ -167,9 +155,9 @@ object UserProfile {
 
         // 读账号数据
 
-        this.user.deviceId = joData.getString("deviceId")
-        this.user.userId = joData.getString("userId")
-        this.user.createAt = joData.getInt("createAt")
+        val joUser = joData.getJSONObject("user")
+        this.user.userId = joUser.getLong("userId")
+        this.user.createAt = joUser.getInt("createAt")
 
         this.writeUserToLocal()
 
@@ -195,7 +183,7 @@ object UserProfile {
     }
 
     fun reqNodes() {
-        val (opCode, joData) = NetOp.user(this.user.deviceId)
+        val (opCode, joData) = NetOp.user(this.user.userId, this.user.deviceId)
         if (opCode != 0 || joData == null) {
             Log.e(TAG, "reqNodes except,opCode $opCode")
             return

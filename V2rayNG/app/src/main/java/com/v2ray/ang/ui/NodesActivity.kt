@@ -46,7 +46,7 @@ class NodesActivity : BaseActivity() {
 
         var currentTab = 0
         for (item in UserProfile.nodes.get()) {
-            if (item.isOpen && item.type == NODE_TYPE_STREAMING && item.id == NodeSelected.nodeId.value) {
+            if (item.nodeType == NODE_TYPE_STREAMING && item.id == NodeSelected.nodeId.value) {
                 currentTab = 1
             }
         }

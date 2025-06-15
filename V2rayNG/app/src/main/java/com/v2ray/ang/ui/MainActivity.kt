@@ -5,12 +5,14 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.ConnectivityManager
+import android.net.VpnService
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -22,6 +24,7 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.tabs.TabLayout
 import com.v2ray.ang.AppConfig
+import com.v2ray.ang.AppConfig.VPN
 import com.v2ray.ang.R
 import com.v2ray.ang.databinding.ActivityMainBinding
 import com.v2ray.ang.extension.toast
@@ -37,6 +40,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlin.div
+import kotlin.times
 
 class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedListener {
     private val binding by lazy {
@@ -106,6 +111,18 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         title = getString(R.string.app_name)
         setSupportActionBar(binding.toolbar)
 
+        val speed = binding.animationPowerOff.speed
+        binding.animationPowerOff.visibility = View.VISIBLE
+        binding.animationPowerConnecting.visibility = View.INVISIBLE
+        binding.animationPowerOn.visibility = View.INVISIBLE
+
+        binding.animationPowerConnecting.speed = speed * 2
+        binding.animationPowerOn.speed = speed / 2
+
+        binding.animationPowerOff.setOnClickListener { onPowerClicked() }
+        binding.animationPowerConnecting.setOnClickListener  { onPowerClicked() }
+        binding.animationPowerOn.setOnClickListener  { onPowerClicked() }
+
         /*
         binding.fab.setOnClickListener {
             if (mainViewModel.isRunning.value == true) {
@@ -131,7 +148,6 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         binding.navView.setNavigationItemSelectedListener(this)
 
         setupViewModel()
-        migrateLegacy()
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
@@ -184,7 +200,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
         latencyJob = lifecycleScope.launch(Dispatchers.IO) {
             while (true) {
-                delay(Conf.LATENCY_TICK_INTERVAL)
+                delay(Conf.latencyTickInterval)
                 Log.d(TAG, "latency tick")
                 Latency.tick()
                 /*
@@ -193,6 +209,21 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                 }
                 */
             }
+        }
+    }
+
+    private fun onPowerClicked() {
+        if (mainViewModel.isRunning.value == true) {
+            V2RayServiceManager.stopVService(this)
+        } else if ((MmkvManager.decodeSettingsString(AppConfig.PREF_MODE) ?: VPN) == VPN) {
+            val intent = VpnService.prepare(this)
+            if (intent == null) {
+                startV2Ray()
+            } else {
+                requestVpnPermission.launch(intent)
+            }
+        } else {
+            startV2Ray()
         }
     }
 
@@ -208,26 +239,19 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         mainViewModel.isRunning.observe(this) { isRunning ->
             adapter.isRunning = isRunning
             if (isRunning) {
+                binding.connectionStatus.text = getString(R.string.home_conn_connected)
+                binding.animationPowerOff.visibility = View.INVISIBLE
+                binding.animationPowerConnecting.visibility = View.INVISIBLE
+                binding.animationPowerOn.visibility = View.VISIBLE
             } else {
+                binding.connectionStatus.text = getString(R.string.home_conn_tap_to_open)
+                binding.animationPowerOff.visibility = View.VISIBLE
+                binding.animationPowerConnecting.visibility = View.INVISIBLE
+                binding.animationPowerOn.visibility = View.INVISIBLE
             }
         }
         mainViewModel.startListenBroadcast()
         mainViewModel.initAssets(assets)
-    }
-
-    private fun migrateLegacy() {
-        lifecycleScope.launch(Dispatchers.IO) {
-            val result = MigrateManager.migrateServerConfig2Profile()
-            launch(Dispatchers.Main) {
-                if (result) {
-                    toast(getString(R.string.migration_success))
-                    mainViewModel.reloadServerList()
-                } else {
-                    //toast(getString(R.string.migration_fail))
-                }
-            }
-
-        }
     }
 
     private fun startV2Ray() {
@@ -296,23 +320,6 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             R.id.drawer_menu_share -> shareApp()
         }
 
-        /*
-        // Handle navigation view item clicks here.
-        when (item.itemId) {
-            R.id.sub_setting -> requestSubSettingActivity.launch(Intent(this, SubSettingActivity::class.java))
-            R.id.per_app_proxy_settings -> startActivity(Intent(this, PerAppProxyActivity::class.java))
-            R.id.routing_setting -> requestSubSettingActivity.launch(Intent(this, RoutingSettingActivity::class.java))
-            R.id.user_asset_setting -> startActivity(Intent(this, UserAssetActivity::class.java))
-            R.id.settings -> startActivity(
-                Intent(this, SettingsActivity::class.java)
-                    .putExtra("isRunning", mainViewModel.isRunning.value == true)
-            )
-
-            R.id.promotion -> Utils.openUri(this, "${Utils.decode(AppConfig.APP_PROMOTION_URL)}?t=${System.currentTimeMillis()}")
-            R.id.logcat -> startActivity(Intent(this, LogcatActivity::class.java))
-            R.id.about -> startActivity(Intent(this, AboutActivity::class.java))
-        }
-        */
         binding.drawerLayout.closeDrawer(GravityCompat.START)
         return true
 

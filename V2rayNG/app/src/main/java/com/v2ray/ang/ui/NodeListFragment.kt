@@ -164,7 +164,7 @@ class NodeListFragment(private val nodeType: Int) : Fragment() {
                     freeIcon.visibility = View.GONE
                 }
 
-                rtt = Latency.getRttByHostIp(item.hostIp)
+                rtt = Latency.getRttByHostIp(item.host)
             } else {
                 nodeIcon.setBackgroundColor(com.google.android.material.R.attr.colorOnBackground)
                 nodeIcon.setImageResource(R.drawable.location_on_24px)
@@ -180,8 +180,8 @@ class NodeListFragment(private val nodeType: Int) : Fragment() {
 
             when {
                 rtt == null -> nodeRtt.setTextColor(Color.RED)
-                rtt <= Conf.LATENCY_GOOD -> nodeRtt.setTextColor(0xFF008B00.toInt())
-                rtt <= Conf.LATENCY_AVG -> nodeRtt.setTextColor(0xFFFF7F24.toInt())
+                rtt <= Conf.latencyGood -> nodeRtt.setTextColor(0xFF008B00.toInt())
+                rtt <= Conf.latencyAvg -> nodeRtt.setTextColor(0xFFFF7F24.toInt())
                 else -> nodeRtt.setTextColor(Color.RED)
             }
 
@@ -211,10 +211,10 @@ class NodeListFragment(private val nodeType: Int) : Fragment() {
         }
 
         for (item in UserProfile.nodes.get()) {
-            if (item.type == nodeType) {
+            if (item.nodeType == nodeType) {
                 displayNodes.add(item)
             }
-            if (item.isOpen && item.id == NodeSelected.nodeId.value) {
+            if (item.id == NodeSelected.nodeId.value) {
                 notFound = false
             }
         }
@@ -232,8 +232,8 @@ class NodeListFragment(private val nodeType: Int) : Fragment() {
                 lhs.id == NodeSelected.nodeId.value -> -1
                 rhs.id == NodeSelected.nodeId.value -> 1
                 else ->  {
-                    val lhsRtt = Latency.getRttByHostIp(lhs.hostIp)
-                    val rhsRtt = Latency.getRttByHostIp(rhs.hostIp)
+                    val lhsRtt = Latency.getRttByHostIp(lhs.host)
+                    val rhsRtt = Latency.getRttByHostIp(rhs.host)
                     when {
                         lhsRtt == null -> -1
                         rhsRtt == null -> 1
