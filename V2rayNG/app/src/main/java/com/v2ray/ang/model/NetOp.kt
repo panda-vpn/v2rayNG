@@ -38,7 +38,6 @@ object NetOp {
     }
 
     fun feedback(
-        userId: Long,
         deviceId: String,
         option1: String,
         option2: String,
@@ -50,7 +49,6 @@ object NetOp {
         option8: String,
         others: String) : Int {
         val params = JSONObject().apply {
-            put("userId", userId)
             put("deviceId", deviceId)
             put("option1", option1)
             put("option2", option2)
@@ -66,9 +64,8 @@ object NetOp {
         return opCode
     }
 
-    fun user(userId: Long, deviceId: String): Pair<Int, JSONObject?> {
+    fun user(deviceId: String): Pair<Int, JSONObject?> {
         val params = JSONObject().apply {
-            put("userId", userId)
             put("deviceId", deviceId)
             put("plat", "android")
             put("channel", BuildConfig.CHANNEL)

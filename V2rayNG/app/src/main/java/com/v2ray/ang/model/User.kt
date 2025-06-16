@@ -7,9 +7,10 @@ import android.provider.Settings.Secure
 import android.util.Log
 import com.v2ray.ang.handler.MmkvManager
 import com.v2ray.ang.utilx.NetworkUtils
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.JsonIgnoreUnknownKeys
 import kotlinx.serialization.json.Json
 import org.json.JSONArray
 import org.json.JSONObject
@@ -25,15 +26,15 @@ const val FREE_TYPE_VIP0 = 0
 const val FREE_TYPE_VIP1 = 1
 
 @Serializable
+@JsonIgnoreUnknownKeys
 data class User (@SerialName("deviceId") var deviceId: String) {
-    @SerialName("userId")
-    var userId: Long = 0
 
     @SerialName("createAt")
     var createAt: Int = 0
 }
 
 @Serializable
+@JsonIgnoreUnknownKeys
 data class Node(@SerialName("id") val id: Int) {
     @SerialName("hostId")
     var hostId: Int = 0
@@ -147,7 +148,7 @@ object UserProfile {
     }
 
     private fun reqUser() {
-        val (opCode, joData) = NetOp.user(this.user.userId, this.user.deviceId)
+        val (opCode, joData) = NetOp.user(this.user.deviceId)
         if (opCode != 0 || joData == null) {
             Log.e(TAG, "reqUser except,opCode $opCode")
             return
@@ -156,7 +157,6 @@ object UserProfile {
         // 读账号数据
 
         val joUser = joData.getJSONObject("user")
-        this.user.userId = joUser.getLong("userId")
         this.user.createAt = joUser.getInt("createAt")
 
         this.writeUserToLocal()
@@ -183,7 +183,7 @@ object UserProfile {
     }
 
     fun reqNodes() {
-        val (opCode, joData) = NetOp.user(this.user.userId, this.user.deviceId)
+        val (opCode, joData) = NetOp.user(this.user.deviceId)
         if (opCode != 0 || joData == null) {
             Log.e(TAG, "reqNodes except,opCode $opCode")
             return
