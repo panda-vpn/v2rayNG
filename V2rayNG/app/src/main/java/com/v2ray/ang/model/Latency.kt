@@ -74,10 +74,13 @@ object Latency {
         for (hostIp in hosts) {
             val j = GlobalScope.launch(Dispatchers.IO) {
                 val rtt = ping(hostIp)
-                // if (rtt != null && rtt > 30) {          // tun模式下icmp会被拦截处理
-                val record = LatencyRecord(hostIp, rtt, now)
-                latencyTbl.put(hostIp, record)
                 Log.i(TAG, "ping $hostIp,latency $rtt ms")
+                if (rtt != null) {  // 目前发现，切换到后台，网络功能会被限制，ping会返回null。重新切换回来，ping会恢复
+                    val record = LatencyRecord(hostIp, rtt, now)
+                    latencyTbl[hostIp] = record
+                }
+                // if (rtt != null && rtt > 30) {          // tun模式下icmp会被拦截处理
+
                 // }
             }
             jobs.add(j)

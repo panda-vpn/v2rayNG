@@ -200,7 +200,7 @@ dependencies {
     testImplementation(libs.mockito.kotlin)
     coreLibraryDesugaring(libs.desugar.jdk.libs)
 
-    implementation("com.google.android.material:material:1.12.0")
+    implementation(libs.material)
     implementation(libs.okhttp)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.glide)

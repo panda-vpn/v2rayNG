@@ -52,8 +52,6 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         private const val TAG = "MainActivity"
     }
 
-    private lateinit var userProfileJob: Job
-    private lateinit var latencyJob: Job
     private lateinit var networkCallback: ConnectivityManager.NetworkCallback
 
     private val adapter by lazy { MainRecyclerAdapter(this) }
@@ -190,18 +188,17 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             }
         )
 
-        userProfileJob = lifecycleScope.launch(Dispatchers.IO) {
+        lifecycleScope.launch(Dispatchers.IO) {
             while (!UserProfile.isSyncComplete()) {
-                Log.d(TAG, "user profile sync tick")
-                delay(1000 * 10)
+                delay(10 * 1000)  // 10 seconds
                 UserProfile.sync(this@MainActivity)
             }
         }
 
-        latencyJob = lifecycleScope.launch(Dispatchers.IO) {
+        lifecycleScope.launch(Dispatchers.IO) {
             while (true) {
                 delay(Conf.latencyTickInterval)
-                Log.d(TAG, "latency tick")
+                // Log.d(TAG, "latency tick,delay ${Conf.latencyTickInterval}")
                 Latency.tick()
                 /*
                 if (serviceStatus.value == Status.Stopped) {
@@ -337,9 +334,6 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     }
 
     override fun onDestroy() {
-        userProfileJob.cancel()
-        latencyJob.cancel()
-
         NetworkUtils.unregisterNetworkCallback(this, networkCallback)
 
         super.onDestroy()

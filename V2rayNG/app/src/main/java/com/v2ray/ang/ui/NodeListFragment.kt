@@ -73,7 +73,7 @@ class NodeListFragment(private val nodeType: Int) : Fragment() {
             }
 
             listView.adapter = adapter
-            listView.divider?.alpha = 38  // 255 * 0.15
+            listView.divider?.alpha = 38        // 255 * 0.15
             listView.divider?.alpha = 96        // 255 * 0.38
 
             listView.visibility = View.VISIBLE
