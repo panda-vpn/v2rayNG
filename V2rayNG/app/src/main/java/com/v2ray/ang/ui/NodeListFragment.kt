@@ -10,7 +10,6 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.ListView
-import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -48,12 +47,10 @@ class NodeListFragment(private val nodeType: Int) : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        Log.d(TAG, "****** 11")
         return inflater.inflate(R.layout.layout_node_list, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        Log.d(TAG, "****** 22")
         super.onViewCreated(view, savedInstanceState)
 
         val listView = view.findViewById<ListView>(R.id.node_list)
@@ -147,7 +144,7 @@ class NodeListFragment(private val nodeType: Int) : Fragment() {
 
             if (item?.id != NODE_ID_AUTO_SELECT) {
                 nodeIcon.setBackgroundColor(Color.TRANSPARENT)
-                val iconUrl = "${AppConfig.SAFE_BIT_FLAGS_BASE_URL}/${item!!.icon}.png"
+                val iconUrl = "${Conf.assetsUrl}/flags/${item!!.icon}.png"
                 Glide.with(context)
                     .load(iconUrl)
                     .placeholder(R.drawable.location_on_24px)
@@ -191,8 +188,7 @@ class NodeListFragment(private val nodeType: Int) : Fragment() {
             radioButton.isChecked = item.id == NodeSelected.nodeId.value
             radioButton.setOnClickListener{
                 NodeSelected.nodeId.value = item.id
-                UserProfile.setChoiceNodeId(NodeSelected.nodeId.value!!)
-                // notifyDataSetChanged()
+                UserProfile.setChoiceNodeId(item.id)
             }
 
             return view

@@ -6,4 +6,5 @@ object Conf {
     var nodeLatencyGoodInMillis: Long = 300 + 1                         // 节点网络延迟，单位毫秒
     var nodeLatencyAvgInMillis: Long = 500 + 1                          // 节点网络延迟，单 位毫秒
 
+    var assetsUrl: String = "https://assets.safebit.me/"
 }

@@ -7,10 +7,6 @@ object AppConfig {
     const val ANG_PACKAGE = BuildConfig.APPLICATION_ID
     const val TAG = BuildConfig.APPLICATION_ID
 
-    const val SAFE_BIT_PRIVACY_POLICY = "https://static.safebit.cc/html/privacy.html"
-    const val SAFE_BIT_TERMS_OF_SERVICE = "https://static.safebit.cc/html/terms.html"
-    const val SAFE_BIT_FLAGS_BASE_URL = "https://static.safebit.cc/images/flags"
-
     /** Directory names used in the app's file system. */
     const val DIR_ASSETS = "assets"
     const val DIR_BACKUPS = "backups"

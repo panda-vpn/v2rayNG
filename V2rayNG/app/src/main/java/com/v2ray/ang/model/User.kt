@@ -97,6 +97,9 @@ object UserProfile {
     }
 
     private fun parseNodes(nodes: JSONArray) {
+        val choiceNodeId = getChoiceNodeId()
+        var isFoundNodeId = false
+
         val tmpNodes = mutableListOf<Node>()
         for (i in 0 until nodes.length()) {
             val entry = nodes.getJSONObject(i)
@@ -111,10 +114,19 @@ object UserProfile {
             nd.host = entry.getString("host")
             nd.link = entry.getString("link")
             tmpNodes.add(nd)
+
+            if (choiceNodeId == nd.id) {
+                isFoundNodeId = true
+            }
         }
 
         this.nodes.set(tmpNodes)
         this.nodesUpdateAt.set(System.currentTimeMillis())
+
+        if (choiceNodeId != NODE_ID_AUTO_SELECT && isFoundNodeId) {
+            Log.i(TAG,"node id not found,and set to auto select")
+            setChoiceNodeId(NODE_ID_AUTO_SELECT)
+        }
     }
 
     private fun parseConf(joConf: JSONObject) {
@@ -122,11 +134,13 @@ object UserProfile {
         joConf.getLong("nodeListExpireTimeInMillis").also{ if(it > 0) Conf.nodeListExpireTimeInMillis = it }
         joConf.getLong("nodeLatencyGoodInMillis").also{ if(it > 0) Conf.nodeLatencyGoodInMillis = it }
         joConf.getLong("nodeLatencyAvgInMillis").also{ if(it > 0) Conf.nodeLatencyAvgInMillis = it }
+        joConf.getString("assets").also{ if(it.isNotEmpty()) Conf.assetsUrl = it }
 
         Log.d(TAG, "Conf nodeLatencyExpireTimeInMillis ${Conf.nodeLatencyExpireTimeInMillis}")
         Log.d(TAG, "Conf nodeListExpireTimeInMillis ${Conf.nodeListExpireTimeInMillis}")
         Log.d(TAG, "Conf nodeLatencyGoodInMillis ${Conf.nodeLatencyGoodInMillis}")
         Log.d(TAG, "Conf nodeLatencyAvgInMillis ${Conf.nodeLatencyAvgInMillis}")
+        Log.d(TAG, "Conf assets ${Conf.assetsUrl}")
     }
 
     fun isNodesExpired(): Boolean {

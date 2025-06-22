@@ -23,6 +23,7 @@ import com.v2ray.ang.extension.toastSuccess
 import com.v2ray.ang.handler.MmkvManager
 import com.v2ray.ang.handler.SpeedtestManager
 import com.v2ray.ang.handler.UpdateCheckerManager
+import com.v2ray.ang.model.Conf
 import com.v2ray.ang.util.AppManagerUtil
 import com.v2ray.ang.util.Utils
 import com.v2ray.ang.util.ZipUtil
@@ -42,11 +43,11 @@ class AboutActivity : BaseActivity() {
         title = getString(R.string.about_title)
 
         binding.aboutTermsOfService.setOnClickListener {
-            Utils.openUri(this, AppConfig.SAFE_BIT_TERMS_OF_SERVICE)
+            Utils.openUri(this, "${Conf.assetsUrl}/html/terms.html")
         }
 
         binding.aboutPrivacyPolicy.setOnClickListener {
-            Utils.openUri(this, AppConfig.SAFE_BIT_PRIVACY_POLICY)
+            Utils.openUri(this, "${Conf.assetsUrl}/html/privacy.html")
         }
 
         "v${BuildConfig.VERSION_NAME} (${SpeedtestManager.getLibVersion()})".also {
