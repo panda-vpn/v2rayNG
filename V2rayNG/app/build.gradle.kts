@@ -11,7 +11,7 @@ android {
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.v2ray.ang.fb"
+        applicationId = "com.v2ray.ang.sb"
         minSdk = 23
         targetSdk = 35
         versionCode = 646
@@ -191,6 +191,7 @@ dependencies {
 
     // Multidex Support
     implementation(libs.multidex)
+    implementation(libs.androidx.lifecycle.process)
 
     // Testing Libraries
     testImplementation(libs.junit)

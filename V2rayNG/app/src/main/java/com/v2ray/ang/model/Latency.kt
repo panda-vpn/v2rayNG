@@ -59,13 +59,13 @@ object Latency {
         }
     }
 
-    suspend fun batchPing() {
+    private suspend fun batchPing() {
         val hosts = mutableListOf<String>()
         val now = System.currentTimeMillis()
 
         latencyTbl.forEach { entry ->
             val ent = entry.value
-            if (ent.updateAt + Conf.latencyExpireTime <= now) {
+            if (ent.updateAt + Conf.nodeLatencyExpireTimeInMillis <= now) {
                 hosts.add(ent.hostIp)
             }
         }
@@ -88,7 +88,7 @@ object Latency {
         jobs.joinAll()
     }
 
-    fun ping(hostIp: String) : Long? {
+    private fun ping(hostIp: String) : Long? {
         for (i in 1..3) {
             try {
                 val command = "/system/bin/ping -s 56 -c 1 $hostIp"

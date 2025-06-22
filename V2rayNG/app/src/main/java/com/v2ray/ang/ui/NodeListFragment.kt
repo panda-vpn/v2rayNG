@@ -98,7 +98,7 @@ class NodeListFragment(private val nodeType: Int) : Fragment() {
                 lifecycleScope.launch(Dispatchers.IO) {
                     try {
                         // delay(5000)
-                        UserProfile.sync(requireContext())
+                        UserProfile.sync()
                     } finally {
                         refreshGo.set(false)
                         lifecycleScope.launch(Dispatchers.Main) {
@@ -180,8 +180,8 @@ class NodeListFragment(private val nodeType: Int) : Fragment() {
 
             when {
                 rtt == null -> nodeRtt.setTextColor(Color.RED)
-                rtt <= Conf.latencyGood -> nodeRtt.setTextColor(0xFF008B00.toInt())
-                rtt <= Conf.latencyAvg -> nodeRtt.setTextColor(0xFFFF7F24.toInt())
+                rtt <= Conf.nodeLatencyGoodInMillis -> nodeRtt.setTextColor(0xFF008B00.toInt())
+                rtt <= Conf.nodeLatencyAvgInMillis -> nodeRtt.setTextColor(0xFFFF7F24.toInt())
                 else -> nodeRtt.setTextColor(Color.RED)
             }
 

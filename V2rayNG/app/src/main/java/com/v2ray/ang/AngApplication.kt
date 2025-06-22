@@ -1,6 +1,7 @@
 package com.v2ray.ang
 
 import android.content.Context
+import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.multidex.MultiDexApplication
 import androidx.work.Configuration
 import androidx.work.WorkManager
@@ -8,6 +9,7 @@ import com.tencent.mmkv.MMKV
 import com.v2ray.ang.AppConfig.ANG_PACKAGE
 import com.v2ray.ang.handler.SettingsManager
 import com.v2ray.ang.model.UserProfile
+import com.v2ray.ang.utilx.SFAppObserver
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import java.util.Locale
@@ -63,10 +65,7 @@ class AngApplication : MultiDexApplication() {
             UserProfile.readUserFromLocal(this@AngApplication.contentResolver)
         }
 
-        // 从服务端同步用户存档
-        GlobalScope.launch(Dispatchers.IO) {
-            UserProfile.sync(this@AngApplication)
-        }
+        ProcessLifecycleOwner.get().lifecycle.addObserver(SFAppObserver)
     }
 
 }

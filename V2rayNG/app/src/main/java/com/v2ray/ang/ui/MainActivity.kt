@@ -19,6 +19,8 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import com.google.android.material.navigation.NavigationView
@@ -175,7 +177,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                 }
                 */
                 Log.i(TAG, "network available")
-                UserProfile.sync(this)
+                UserProfile.sync()
             },
             onLost = {
                 Log.i(TAG, "network lost")
@@ -188,25 +190,6 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             }
         )
 
-        lifecycleScope.launch(Dispatchers.IO) {
-            while (!UserProfile.isSyncComplete()) {
-                delay(10 * 1000)  // 10 seconds
-                UserProfile.sync(this@MainActivity)
-            }
-        }
-
-        lifecycleScope.launch(Dispatchers.IO) {
-            while (true) {
-                delay(Conf.latencyTickInterval)
-                // Log.d(TAG, "latency tick,delay ${Conf.latencyTickInterval}")
-                Latency.tick()
-                /*
-                if (serviceStatus.value == Status.Stopped) {
-                    Latency.tick()
-                }
-                */
-            }
-        }
     }
 
     private fun onPowerClicked() {

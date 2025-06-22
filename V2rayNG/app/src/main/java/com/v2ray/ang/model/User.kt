@@ -72,7 +72,8 @@ object UserProfile {
 
     lateinit var user: User
 
-    var nodesUpdateAt = AtomicLong(0)
+    private var nodesUpdateAt = AtomicLong(0)
+    private var nodesVer = AtomicLong(0)
     val nodes = AtomicReference<List<Node>>(mutableListOf())
 
     @SuppressLint("HardwareIds")
@@ -117,22 +118,20 @@ object UserProfile {
     }
 
     private fun parseConf(joConf: JSONObject) {
-        Conf.latencyExpireTime = joConf.getLong("latencyExpireTime") * 1000
-        Conf.latencyTickInterval = joConf.getLong("latencyTickInterval") * 1000
-        Conf.nodesExpireTime = joConf.getLong("nodesExpireTime") * 1000
-        Conf.latencyGood = joConf.getLong("latencyGood")
-        Conf.latencyAvg = joConf.getLong("latencyAvg")
+        joConf.getLong("nodeLatencyExpireTimeInMillis").also{ if(it > 0) Conf.nodeLatencyExpireTimeInMillis = it }
+        joConf.getLong("nodeListExpireTimeInMillis").also{ if(it > 0) Conf.nodeListExpireTimeInMillis = it }
+        joConf.getLong("nodeLatencyGoodInMillis").also{ if(it > 0) Conf.nodeLatencyGoodInMillis = it }
+        joConf.getLong("nodeLatencyAvgInMillis").also{ if(it > 0) Conf.nodeLatencyAvgInMillis = it }
 
-        Log.d(TAG, "Conf latencyExpireTime ${Conf.latencyExpireTime}")
-        Log.d(TAG, "Conf latencyTickInterval ${Conf.latencyTickInterval}")
-        Log.d(TAG, "Conf nodesExpireTime ${Conf.nodesExpireTime}")
-        Log.d(TAG, "Conf LatencyGood ${Conf.latencyGood}")
-        Log.d(TAG, "Conf LatencyAvg ${Conf.latencyAvg}")
+        Log.d(TAG, "Conf nodeLatencyExpireTimeInMillis ${Conf.nodeLatencyExpireTimeInMillis}")
+        Log.d(TAG, "Conf nodeListExpireTimeInMillis ${Conf.nodeListExpireTimeInMillis}")
+        Log.d(TAG, "Conf nodeLatencyGoodInMillis ${Conf.nodeLatencyGoodInMillis}")
+        Log.d(TAG, "Conf nodeLatencyAvgInMillis ${Conf.nodeLatencyAvgInMillis}")
     }
 
     fun isNodesExpired(): Boolean {
         val liveTime = System.currentTimeMillis() - nodesUpdateAt.get()
-        return liveTime > Conf.nodesExpireTime
+        return liveTime > Conf.nodeListExpireTimeInMillis
     }
 
     fun getChoiceNodeId(): Int {
@@ -183,31 +182,31 @@ object UserProfile {
     }
 
     fun reqNodes() {
-        val (opCode, joData) = NetOp.user(this.user.deviceId)
+        val (opCode, joData) = NetOp.nodes(this.nodesVer.get())
         if (opCode != 0 || joData == null) {
             Log.e(TAG, "reqNodes except,opCode $opCode")
             return
         }
 
-        if (joData.has("nodes")) {
-            val joNodes = joData.getJSONArray("nodes")
-            this.parseNodes(joNodes)
-            Log.d(TAG, "remote nodes:${Json.encodeToString(this.nodes.get())}")
+        if (joData.has("ver")) {
+            val ver = joData.getLong("ver")
+            if (ver != this.nodesVer.get()) {
+                this.nodesVer.set(ver)
+                if (joData.has("nodes")) {
+                    val joNodes = joData.getJSONArray("nodes")
+                    this.parseNodes(joNodes)
+                    Log.d(TAG, "remote nodes,ver ${this.nodesVer.get()},${Json.encodeToString(this.nodes.get())}")
+                }
+            }
         }
     }
 
-    fun sync(context: Context) {
-        if (!NetworkUtils.isNetworkAvailable(context)) {
-            return
-        }
-
-        if (!isSyncOk.get()) {
-            if (isSyncGo.compareAndSet(false, true)) {
-                try {
-                    this.reqUser()
-                } finally {
-                    isSyncGo.set(false)
-                }
+    fun sync() {
+        if (isSyncGo.compareAndSet(false, true)) {
+            try {
+                this.reqUser()
+            } finally {
+                isSyncGo.set(false)
             }
         }
     }

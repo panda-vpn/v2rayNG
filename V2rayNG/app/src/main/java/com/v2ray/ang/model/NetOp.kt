@@ -73,8 +73,10 @@ object NetOp {
         return post("user", params)
     }
 
-    fun nodes(): Pair<Int, JSONObject?> {
-        val params = JSONObject().apply {}
+    fun nodes(ver: Long): Pair<Int, JSONObject?> {
+        val params = JSONObject().apply {
+            put("ver", ver)
+        }
         return post("nodes", params)
     }
 }
