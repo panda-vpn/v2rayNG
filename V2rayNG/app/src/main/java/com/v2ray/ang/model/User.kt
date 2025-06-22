@@ -22,9 +22,6 @@ const val NODE_TYPE_LOCATION = 1
 const val NODE_TYPE_STREAMING = 2
 const val NODE_ID_AUTO_SELECT = Int.MAX_VALUE
 
-const val FREE_TYPE_VIP0 = 0
-const val FREE_TYPE_VIP1 = 1
-
 @Serializable
 @JsonIgnoreUnknownKeys
 data class User (@SerialName("deviceId") var deviceId: String) {
@@ -54,8 +51,8 @@ data class Node(@SerialName("id") val id: Int) {
     @SerialName("icon")
     var icon: String = ""
 
-    @SerialName("freeType")
-    var freeType: Int = 0
+    @SerialName("vip")
+    var vip: Int = 0
 
     @SerialName("host")
     var host: String = ""
@@ -110,7 +107,7 @@ object UserProfile {
             nd.nodeType = entry.getInt("nodeType")
             nd.name = entry.getString("name")
             nd.icon = entry.getString("icon")
-            nd.freeType = entry.getInt("freeType")
+            nd.vip = entry.getInt("vip")
             nd.host = entry.getString("host")
             nd.link = entry.getString("link")
             tmpNodes.add(nd)
@@ -123,7 +120,7 @@ object UserProfile {
         this.nodes.set(tmpNodes)
         this.nodesUpdateAt.set(System.currentTimeMillis())
 
-        if (choiceNodeId != NODE_ID_AUTO_SELECT && isFoundNodeId) {
+        if (choiceNodeId != NODE_ID_AUTO_SELECT && !isFoundNodeId) {
             Log.i(TAG,"node id not found,and set to auto select")
             setChoiceNodeId(NODE_ID_AUTO_SELECT)
         }

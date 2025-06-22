@@ -16,10 +16,8 @@ import androidx.lifecycle.lifecycleScope
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.progressindicator.CircularProgressIndicator
 import com.google.android.material.radiobutton.MaterialRadioButton
-import com.v2ray.ang.AppConfig
 import com.v2ray.ang.R
 import com.v2ray.ang.model.Conf
-import com.v2ray.ang.model.FREE_TYPE_VIP0
 import com.v2ray.ang.model.Latency
 import com.v2ray.ang.model.NODE_ID_AUTO_SELECT
 import com.v2ray.ang.model.NODE_TYPE_LOCATION
@@ -153,7 +151,7 @@ class NodeListFragment(private val nodeType: Int) : Fragment() {
                     .centerCrop()
                     .into(nodeIcon)
 
-                if (item.freeType == FREE_TYPE_VIP0) {
+                if (item.vip == 0) {
                     vipIcon.visibility = View.GONE
                     freeIcon.visibility = View.VISIBLE
                 } else {
@@ -223,10 +221,10 @@ class NodeListFragment(private val nodeType: Int) : Fragment() {
             when {
                 lhs.id == NODE_ID_AUTO_SELECT -> -1
                 rhs.id == NODE_ID_AUTO_SELECT -> 1
-                lhs.freeType == FREE_TYPE_VIP0 -> -1
-                rhs.freeType == FREE_TYPE_VIP0 -> 1
                 lhs.id == NodeSelected.nodeId.value -> -1
                 rhs.id == NodeSelected.nodeId.value -> 1
+                lhs.vip == 0 -> -1
+                rhs.vip == 0 -> 1
                 else ->  {
                     val lhsRtt = Latency.getRttByHostIp(lhs.host)
                     val rhsRtt = Latency.getRttByHostIp(rhs.host)
