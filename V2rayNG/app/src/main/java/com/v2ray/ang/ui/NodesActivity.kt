@@ -36,7 +36,7 @@ class NodesActivity : BaseActivity() {
 
         Log.d(TAG, "onCreate")
 
-        NodeSelected.nodeId.value = UserProfile.getChoiceNodeId()
+        NodeSelected.nodeId.value = UserProfile.getSelectedNodeId()
 
         fragmentList.add(NodeListFragment(NODE_TYPE_LOCATION))
         fragmentList.add(NodeListFragment(NODE_TYPE_STREAMING))

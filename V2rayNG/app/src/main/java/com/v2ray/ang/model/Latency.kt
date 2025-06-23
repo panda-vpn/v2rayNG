@@ -26,8 +26,7 @@ object Latency {
     }
 
     fun getRttByHostIp(hostIp: String): Long? {
-        val ent = latencyTbl.get(hostIp)
-        return ent?.rtt
+        return latencyTbl[hostIp]?.rtt
     }
 
     fun getMinRtt(): Long? {

@@ -186,7 +186,7 @@ class NodeListFragment(private val nodeType: Int) : Fragment() {
             radioButton.isChecked = item.id == NodeSelected.nodeId.value
             radioButton.setOnClickListener{
                 NodeSelected.nodeId.value = item.id
-                UserProfile.setChoiceNodeId(item.id)
+                UserProfile.setSelectedNodeId(item.id)
             }
 
             return view

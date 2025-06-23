@@ -29,7 +29,7 @@ object MmkvManager {
 
     private const val ID_SAFE_BIT = "SAFE_BIT"
     private const val KEY_USER_PROFILE = "USER_PROFILE"
-    private const val KEY_NODE_CHOICE = "NODE_CHOICE"
+    private const val KEY_SELECTED_NODE_ID = "NODE_CHOICE"
 
     //private val profileStorage by lazy { MMKV.mmkvWithID(ID_PROFILE_CONFIG, MMKV.MULTI_PROCESS_MODE) }
     private val mainStorage by lazy { MMKV.mmkvWithID(ID_MAIN, MMKV.MULTI_PROCESS_MODE) }
@@ -51,12 +51,12 @@ object MmkvManager {
         safeBitStorage.encode(KEY_USER_PROFILE, profile)
     }
 
-    fun getNodeChoice(): Int {
-        return safeBitStorage.decodeInt(KEY_NODE_CHOICE, -1)
+    fun getSelectedNodeId(): Int {
+        return safeBitStorage.decodeInt(KEY_SELECTED_NODE_ID, -1)
     }
 
-    fun setNodeChoice(nodeId: Int) {
-        safeBitStorage.encode(KEY_NODE_CHOICE, nodeId)
+    fun setSelectedNodeId(nodeId: Int) {
+        safeBitStorage.encode(KEY_SELECTED_NODE_ID, nodeId)
     }
 
     //region Server

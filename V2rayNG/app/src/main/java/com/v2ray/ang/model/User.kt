@@ -94,7 +94,7 @@ object UserProfile {
     }
 
     private fun parseNodes(nodes: JSONArray) {
-        val choiceNodeId = getChoiceNodeId()
+        val selectedNodeId = getSelectedNodeId()
         var isFoundNodeId = false
 
         val tmpNodes = mutableListOf<Node>()
@@ -112,7 +112,7 @@ object UserProfile {
             nd.link = entry.getString("link")
             tmpNodes.add(nd)
 
-            if (choiceNodeId == nd.id) {
+            if (selectedNodeId == nd.id) {
                 isFoundNodeId = true
             }
         }
@@ -120,9 +120,9 @@ object UserProfile {
         this.nodes.set(tmpNodes)
         this.nodesUpdateAt.set(System.currentTimeMillis())
 
-        if (choiceNodeId != NODE_ID_AUTO_SELECT && !isFoundNodeId) {
+        if (selectedNodeId != NODE_ID_AUTO_SELECT && !isFoundNodeId) {
             Log.i(TAG,"node id not found,and set to auto select")
-            setChoiceNodeId(NODE_ID_AUTO_SELECT)
+            setSelectedNodeId(NODE_ID_AUTO_SELECT)
         }
     }
 
@@ -145,16 +145,16 @@ object UserProfile {
         return liveTime > Conf.nodeListExpireTimeInMillis
     }
 
-    fun getChoiceNodeId(): Int {
-        var nodeId = MmkvManager.getNodeChoice()
+    fun getSelectedNodeId(): Int {
+        var nodeId = MmkvManager.getSelectedNodeId()
         nodeId = if (nodeId != -1) nodeId else NODE_ID_AUTO_SELECT
-        Log.i(TAG, "got choice node id $nodeId")
+        Log.i(TAG, "got selected node id $nodeId")
         return nodeId
     }
 
-    fun setChoiceNodeId(nodeId : Int) {
-        MmkvManager.setNodeChoice(nodeId)
-        Log.i(TAG, "set choice node id $nodeId")
+    fun setSelectedNodeId(nodeId : Int) {
+        MmkvManager.setSelectedNodeId(nodeId)
+        Log.i(TAG, "set selected node id $nodeId")
     }
 
     private fun reqUser() {
@@ -185,7 +185,9 @@ object UserProfile {
         if (joData.has("nodes")) {
             val joNodes = joData.getJSONArray("nodes")
             this.parseNodes(joNodes)
-            Log.d(TAG, "nodes:${Json.encodeToString(this.nodes.get())}")
+
+            // 这里会输出秘钥
+            // Log.d(TAG, "nodes:${Json.encodeToString(this.nodes.get())}")
 
             // 立即探测网络延迟
             Latency.tick()

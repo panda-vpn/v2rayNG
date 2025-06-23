@@ -32,6 +32,7 @@ import com.v2ray.ang.databinding.ActivityMainBinding
 import com.v2ray.ang.extension.toast
 import com.v2ray.ang.handler.MigrateManager
 import com.v2ray.ang.handler.MmkvManager
+import com.v2ray.ang.handler.ProfileManager
 import com.v2ray.ang.model.Conf
 import com.v2ray.ang.model.Latency
 import com.v2ray.ang.model.UserProfile
@@ -235,6 +236,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     }
 
     private fun startV2Ray() {
+        ProfileManager.setSelectedServer()
         if (MmkvManager.getSelectServer().isNullOrEmpty()) {
             toast(R.string.title_file_chooser)
             return
