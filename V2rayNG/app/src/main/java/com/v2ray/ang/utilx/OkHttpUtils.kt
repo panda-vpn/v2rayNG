@@ -27,6 +27,7 @@ object OkHttpUtils {
         .build()
     */
 
+    // 不知为何，go server会有证书问题，matomo却没有问题，可能与matomo用的不是OkHttp3有关系!!!
 
     fun getClient(): OkHttpClient {
         val trustAllCerts = arrayOf<TrustManager>(object : X509TrustManager {
