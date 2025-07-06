@@ -27,6 +27,7 @@ object OkHttpUtils {
         .build()
     */
 
+
     fun getClient(): OkHttpClient {
         val trustAllCerts = arrayOf<TrustManager>(object : X509TrustManager {
             @Throws(java.security.cert.CertificateException::class)

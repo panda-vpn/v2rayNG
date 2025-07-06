@@ -1,6 +1,7 @@
 package com.v2ray.ang
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.multidex.MultiDexApplication
 import androidx.work.Configuration
@@ -18,12 +19,14 @@ import org.matomo.sdk.Matomo
 import org.matomo.sdk.Tracker
 import org.matomo.sdk.TrackerBuilder
 import com.v2ray.ang.BuildConfig
+import org.matomo.sdk.TrackMe
 import org.matomo.sdk.extra.TrackHelper
 
 class AngApplication : MultiDexApplication() {
     companion object {
         lateinit var application: AngApplication
         lateinit var tracker: Tracker
+        private const val TAG = "AngApplication"
     }
 
     /**
@@ -44,8 +47,6 @@ class AngApplication : MultiDexApplication() {
      */
     override fun onCreate() {
         super.onCreate()
-
-        tracker = TrackerBuilder.createDefault(BuildConfig.MATOMO_TRACKER_URL, BuildConfig.MATOMO_SITE_ID).build(Matomo.getInstance(this))
 
         ////----
         val locale = Locale("en")
@@ -74,6 +75,15 @@ class AngApplication : MultiDexApplication() {
         }
 
         ProcessLifecycleOwner.get().lifecycle.addObserver(SFAppObserver)
+
+        tracker = TrackerBuilder.createDefault(BuildConfig.MATOMO_TRACKER_URL, BuildConfig.MATOMO_SITE_ID)
+            .build(Matomo.getInstance(this))
+        tracker.setUserId(UserProfile.user.deviceId)
+        tracker.addTrackingCallback { trackMe: TrackMe? ->
+            Log.d(TAG, "Tracker.Callback.onTrack(${trackMe})")
+            trackMe
+        }
+        TrackHelper.track().event("c_user", "c_launch").with(tracker)
     }
 
 }

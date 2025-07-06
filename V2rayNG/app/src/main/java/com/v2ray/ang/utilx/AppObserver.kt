@@ -15,7 +15,7 @@ import kotlinx.coroutines.launch
 
 object SFAppObserver: DefaultLifecycleObserver {
 
-    private const val TAG = "MainActivity"
+    private const val TAG = "SFAppObserver"
     private var isForeground = false
 
     private lateinit var scopeForUser: CoroutineScope
