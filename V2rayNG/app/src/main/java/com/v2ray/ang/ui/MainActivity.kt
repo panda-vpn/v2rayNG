@@ -236,8 +236,9 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     }
 
     private fun startV2Ray() {
-        ProfileManager.setSelectedServer()
-        if (MmkvManager.getSelectServer().isNullOrEmpty()) {
+        val ok = ProfileManager.setSelectedServer()
+        // if (MmkvManager.getSelectServer().isNullOrEmpty()) {
+        if (!ok) {
             toast(R.string.title_file_chooser)
             return
         }

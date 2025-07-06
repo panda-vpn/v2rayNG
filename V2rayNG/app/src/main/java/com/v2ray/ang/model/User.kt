@@ -195,7 +195,7 @@ object UserProfile {
     }
 
     fun reqNodes() {
-        val (opCode, joData) = NetOp.nodes(this.nodesVer.get())
+        val (opCode, joData) = NetOp.nodes(this.user.deviceId, this.nodesVer.get())
         if (opCode != 0 || joData == null) {
             Log.e(TAG, "reqNodes except,opCode $opCode")
             return

@@ -42,8 +42,6 @@ android {
 
     buildTypes {
         release {
-            buildConfigField("String", "API_BASE_URL", "\"http://dev-api.safebit.cc:58888\"")
-
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -51,8 +49,6 @@ android {
             )
         }
         debug {
-            buildConfigField("String", "API_BASE_URL", "\"http://dev-api.safebit.cc:58888\"")
-
             isMinifyEnabled = false
         }
     }
@@ -64,11 +60,20 @@ android {
             applicationIdSuffix = ".fdroid"
             buildConfigField("String", "DISTRIBUTION", "\"F-Droid\"")
             buildConfigField("String", "CHANNEL", "\"fdroid\"")
+
+            buildConfigField("String", "API_BASE_URL", "\"https://dev-api.safebit.cc:8443\"")
+            buildConfigField("String", "MATOMO_TRACKER_URL", "\"https://dev-matomo-d.safebit.me:2053/matomo.php\"")
+            buildConfigField("int", "MATOMO_SITE_ID", "1")
+
         }
-        create("playstore") {
+        create("gooleplay") {
             dimension = "distribution"
-            buildConfigField("String", "DISTRIBUTION", "\"Play Store\"")
+            buildConfigField("String", "DISTRIBUTION", "\"Google Play\"")
             buildConfigField("String", "CHANNEL", "\"gooleplay\"")
+
+            buildConfigField("String", "API_BASE_URL", "\"https://dev-api.safebit.cc:8443\"")
+            buildConfigField("String", "MATOMO_TRACKER_URL", "\"https://dev-matomo-d.safebit.me:2053/matomo.php\"")
+            buildConfigField("int", "MATOMO_SITE_ID", "1")
         }
     }
 
@@ -206,4 +211,5 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.glide)
     implementation(libs.lottie)
+    implementation(libs.matomo.sdk.android)
 }

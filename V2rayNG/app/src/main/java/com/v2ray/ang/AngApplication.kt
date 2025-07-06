@@ -14,10 +14,16 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import java.util.Locale
 import kotlinx.coroutines.*
+import org.matomo.sdk.Matomo
+import org.matomo.sdk.Tracker
+import org.matomo.sdk.TrackerBuilder
+import com.v2ray.ang.BuildConfig
+import org.matomo.sdk.extra.TrackHelper
 
 class AngApplication : MultiDexApplication() {
     companion object {
         lateinit var application: AngApplication
+        lateinit var tracker: Tracker
     }
 
     /**
@@ -38,6 +44,8 @@ class AngApplication : MultiDexApplication() {
      */
     override fun onCreate() {
         super.onCreate()
+
+        tracker = TrackerBuilder.createDefault(BuildConfig.MATOMO_TRACKER_URL, BuildConfig.MATOMO_SITE_ID).build(Matomo.getInstance(this))
 
         ////----
         val locale = Locale("en")
