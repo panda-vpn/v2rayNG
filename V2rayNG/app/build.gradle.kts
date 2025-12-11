@@ -61,7 +61,8 @@ android {
             buildConfigField("String", "DISTRIBUTION", "\"F-Droid\"")
             buildConfigField("String", "CHANNEL", "\"fdroid\"")
 
-            buildConfigField("String", "API_BASE_URL", "\"https://dev-api.safebit.cc:8443\"")
+            buildConfigField("String", "API_BASE_URL", "\"https://dev-api.safebit.me:8443\"")
+            buildConfigField("String", "VERSION_UPDATER_URL", "\"https://dev-api.safebit.cc:8443/ver\"")
             buildConfigField("String", "MATOMO_TRACKER_URL", "\"https://dev-matomo.safebit.me:2053/matomo.php\"")
             buildConfigField("int", "MATOMO_SITE_ID", "1")
 
@@ -71,7 +72,8 @@ android {
             buildConfigField("String", "DISTRIBUTION", "\"Google Play\"")
             buildConfigField("String", "CHANNEL", "\"gooleplay\"")
 
-            buildConfigField("String", "API_BASE_URL", "\"https://dev-api.safebit.cc:8443\"")
+            buildConfigField("String", "API_BASE_URL", "\"https://dev-api.safebit.me:8443\"")
+            buildConfigField("String", "VERSION_UPDATER_URL", "\"https://dev-api.safebit.cc:8443/ver\"")
             buildConfigField("String", "MATOMO_TRACKER_URL", "\"https://dev-matomo.safebit.me:2053/matomo.php\"")
             buildConfigField("int", "MATOMO_SITE_ID", "1")
         }
@@ -212,4 +214,5 @@ dependencies {
     implementation(libs.glide)
     implementation(libs.lottie)
     implementation(libs.matomo.sdk.android)
+    implementation(libs.xupdate)
 }

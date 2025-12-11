@@ -34,6 +34,7 @@ flexbox = "3.0.0"
 preferenceKtx = "1.2.1"
 recyclerview = "1.4.0"
 lifecycleProcess = "2.9.1"
+xupdate = "1.1.6"
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-swiperefreshlayout = { module = "androidx.swiperefreshlayout:swiperefreshlayout", version.ref = "swiperefreshlayout" }
@@ -74,6 +75,7 @@ flexbox = { module = "com.google.android.flexbox:flexbox", version.ref = "flexbo
 recyclerview = { module = "androidx.recyclerview:recyclerview", version.ref = "recyclerview" }
 preference-ktx = { module = "androidx.preference:preference-ktx", version.ref = "preferenceKtx" }
 androidx-lifecycle-process = { group = "androidx.lifecycle", name = "lifecycle-process", version.ref = "lifecycleProcess" }
+xupdate = { module = "com.github.xuexiangjys:XUpdate", version.ref = "xupdate" }
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }

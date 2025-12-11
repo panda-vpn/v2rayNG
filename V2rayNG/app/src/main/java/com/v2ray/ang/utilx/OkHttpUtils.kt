@@ -1,5 +1,6 @@
 package io.nekohasekai.sfa.utils
 
+import android.annotation.SuppressLint
 import com.v2ray.ang.AngApplication
 import okhttp3.Call
 import okhttp3.MediaType.Companion.toMediaType
@@ -29,17 +30,20 @@ object OkHttpUtils {
 
     // 不知为何，go server会有证书问题，matomo却没有问题，可能与matomo用的不是OkHttp3有关系!!!
     // 另外，Chrome浏览器访问，也显示HTTPS是安全的
-    
-    fun getClient(): OkHttpClient {
-        val trustAllCerts = arrayOf<TrustManager>(object : X509TrustManager {
+
+    private fun getClient(): OkHttpClient {
+        val trustAllCerts = arrayOf<TrustManager>(@SuppressLint("CustomX509TrustManager")
+        object : X509TrustManager {
+            @SuppressLint("TrustAllX509TrustManager")
             @Throws(java.security.cert.CertificateException::class)
             override fun checkClientTrusted(chain: Array<X509Certificate>, authType: String) {
                 // 信任所有客户端证书（一般用不到）
             }
 
+            @SuppressLint("TrustAllX509TrustManager")
             @Throws(java.security.cert.CertificateException::class)
             override fun checkServerTrusted(chain: Array<X509Certificate>, authType: String) {
-                // 信任所有服务器证书，不做任何验证 ✅
+                // 信任所有服务器证书，不做任何验证
             }
 
             override fun getAcceptedIssuers(): Array<X509Certificate> {
@@ -51,7 +55,7 @@ object OkHttpUtils {
         sslContext.init(null, trustAllCerts, SecureRandom())
         val sslSocketFactory = sslContext.socketFactory
 
-        var cli = OkHttpClient.Builder()
+        val cli = OkHttpClient.Builder()
             .connectTimeout(5, TimeUnit.SECONDS)
             .readTimeout(5, TimeUnit.SECONDS)
             .writeTimeout(5, TimeUnit.SECONDS)

@@ -19,32 +19,28 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
-import androidx.lifecycle.LifecycleObserver
-import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.tabs.TabLayout
+import com.v2ray.ang.AngApplication
 import com.v2ray.ang.AppConfig
 import com.v2ray.ang.AppConfig.VPN
+import com.v2ray.ang.BuildConfig
 import com.v2ray.ang.R
 import com.v2ray.ang.databinding.ActivityMainBinding
 import com.v2ray.ang.extension.toast
-import com.v2ray.ang.handler.MigrateManager
 import com.v2ray.ang.handler.MmkvManager
 import com.v2ray.ang.handler.ProfileManager
-import com.v2ray.ang.model.Conf
-import com.v2ray.ang.model.Latency
 import com.v2ray.ang.model.UserProfile
 import com.v2ray.ang.service.V2RayServiceManager
 import com.v2ray.ang.utilx.NetworkUtils
+import com.v2ray.ang.utilx.update.OkHttpUpdateHttpServiceImpl
+import com.v2ray.ang.utilx.update.XUpdateParserImpl
 import com.v2ray.ang.viewmodel.MainViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
+import com.xuexiang.xupdate.XUpdate
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlin.div
-import kotlin.times
 
 class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedListener {
     private val binding by lazy {
@@ -190,6 +186,26 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                 */
             }
         )
+
+        val xUpdateParams: Map<String, Any> = mapOf(
+            "deviceId" to UserProfile.user.deviceId,
+            "channel" to BuildConfig.CHANNEL,
+            "ver" to BuildConfig.VERSION_NAME,
+            "lang" to "en"
+        )
+        XUpdate.get()
+            .debug(true)
+            .isGet(true)
+            .params(xUpdateParams)
+            .setIUpdateParser(XUpdateParserImpl())
+            .setIUpdateHttpService(OkHttpUpdateHttpServiceImpl())
+            .init(AngApplication.application)
+
+        XUpdate.newBuild(this)
+            .updateUrl(BuildConfig.VERSION_UPDATER_URL)
+            .supportBackgroundUpdate(true)
+            .update()
+        // updateApp(BuildConfig.VERSION_UPDATER_URL, UpdateAppHttpUtil()).update()
 
     }
 

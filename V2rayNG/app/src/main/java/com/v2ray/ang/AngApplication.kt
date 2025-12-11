@@ -74,6 +74,11 @@ class AngApplication : MultiDexApplication() {
             UserProfile.readUserFromLocal(this@AngApplication.contentResolver)
         }
 
+        if (UserProfile.user.deviceId.isEmpty()) {
+            Log.e(TAG, "device id cant empty!!!")
+            // ???
+        }
+
         ProcessLifecycleOwner.get().lifecycle.addObserver(SFAppObserver)
 
         tracker = TrackerBuilder.createDefault(BuildConfig.MATOMO_TRACKER_URL, BuildConfig.MATOMO_SITE_ID)
